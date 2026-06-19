@@ -1,0 +1,23 @@
+menu "AGCORE BLE CONFIG"
+
+config AGCORE_BLE_ENABLE
+    bool "Enable AGCORE BLE transport"
+    default y
+    depends on !APP_NO_BLOBS
+    select BT_ENABLED
+    select BT_NIMBLE_ENABLED
+    select BT_CONTROLLER_ENABLED if SOC_BT_SUPPORTED
+    help
+        Enable AGCORE BLE transport and select ESP-IDF Bluetooth NimBLE support.
+
+config AGCORE_BLE_ADV_ITVL_MIN_MS
+    int "BLE advertising min interval(ms)"
+    default 100
+    depends on AGCORE_BLE_ENABLE
+
+config AGCORE_BLE_ADV_ITVL_MAX_MS
+    int "BLE advertising max interval(ms)"
+    default 200
+    depends on AGCORE_BLE_ENABLE
+
+endmenu

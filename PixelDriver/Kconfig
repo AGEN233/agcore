@@ -1,0 +1,47 @@
+menu "Pixel Driver Configuration"
+
+config PIXEL_DRIVER_ENABLE
+    bool "Enable Pixel Driver"
+    default n
+
+choice PIXEL_TYPE
+    prompt "Pixel Type"
+    default PIXEL_TYPE_WS2812B_RMT
+    depends on PIXEL_DRIVER_ENABLE
+
+config PIXEL_TYPE_WS2812B_SPI
+    bool "WS2812B (SPI)"
+
+config PIXEL_TYPE_WS2812B_RMT
+    bool "WS2812B (RMT)"
+
+config PIXEL_TYPE_SK6812
+    bool "SK6812"
+
+endchoice
+
+config WS2812B_STACK_SIZE
+    int "WS2812B Task Stack Size (bytes)"
+    default 1024
+    range 256 8192
+    depends on PIXEL_DRIVER_ENABLE && (PIXEL_TYPE_WS2812B_SPI || PIXEL_TYPE_WS2812B_RMT)
+
+config ARGB_OUT_PIN
+    int "ARGB Output Pin"
+    default 2
+    range 0 39
+    depends on PIXEL_DRIVER_ENABLE
+
+config LED_COUNT_MAX
+    int "LED Count Max"
+    default 1024
+    range 1 4096
+    depends on PIXEL_DRIVER_ENABLE
+
+config DEFAULT_LED_NUM
+    int "Default LED Count"
+    default 100
+    range 1 LED_COUNT_MAX
+    depends on PIXEL_DRIVER_ENABLE
+
+endmenu

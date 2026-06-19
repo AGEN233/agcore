@@ -1,6 +1,6 @@
 # AGCORE
 
-AGCORE 是 AGOS 工程中的核心组件，包含 BLE 数据通道、设备信息、版本信息、Pixel Driver、日志和通用工具模块。
+AGCORE 是 个人DIY项目的适配抽离层，拥抱ESPIDF生态，基于ESPIDF进行适配
 
 ## 目录
 

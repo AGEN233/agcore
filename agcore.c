@@ -13,6 +13,8 @@ void agcore_init(void)
     // data chanel_init
     agcore_data_queue_init();
 
+
+    // ble init
     agcore_ble_init();
 }
 

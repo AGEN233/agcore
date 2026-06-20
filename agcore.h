@@ -11,7 +11,6 @@
 
 #define AGCORE_VERSION       0x02
 #define AGCORE_ID            0x01
-#define AGCORE_VRESION       AGCORE_VERSION
 
 #include "agcore_version.h"
 #include "pixel_driver.h"

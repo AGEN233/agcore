@@ -105,19 +105,24 @@ esp_err_t display_st7735_set_rotation(display_st7735_rotation_et rotation)
 
     uint8_t madctl = ST7735_BGR_ORDER ? LCD_CMD_BGR_BIT : 0;
     switch (rotation) {
-        case DISPLAY_ST7735_ROTATION_0:
+        case DISPLAY_ST7735_ROTATION_0: {
             break;
-        case DISPLAY_ST7735_ROTATION_90:
+        }
+        case DISPLAY_ST7735_ROTATION_90: {
             madctl |= LCD_CMD_MV_BIT | LCD_CMD_MX_BIT;
             break;
-        case DISPLAY_ST7735_ROTATION_180:
+        }
+        case DISPLAY_ST7735_ROTATION_180: {
             madctl |= LCD_CMD_MX_BIT | LCD_CMD_MY_BIT;
             break;
-        case DISPLAY_ST7735_ROTATION_270:
+        }
+        case DISPLAY_ST7735_ROTATION_270: {
             madctl |= LCD_CMD_MV_BIT | LCD_CMD_MY_BIT;
             break;
-        default:
+        }
+        default: {
             return ESP_ERR_INVALID_ARG;
+        }
     }
 
     esp_err_t ret = st7735_write(LCD_CMD_MADCTL, &madctl, sizeof(madctl));
@@ -130,7 +135,7 @@ esp_err_t display_st7735_set_rotation(display_st7735_rotation_et rotation)
             s_runtime.width = CONFIG_DISPLAY_ST7735_WIDTH;
             s_runtime.height = CONFIG_DISPLAY_ST7735_HEIGHT;
         }
-        CORE_LOGI(TAG, "rotation=%d madctl=0x%02X size=%ux%u", rotation, madctl, s_runtime.width, s_runtime.height);
+        CORE_LOGD(TAG, "rotation=%d madctl=0x%02X size=%ux%u", rotation, madctl, s_runtime.width, s_runtime.height);
     }
     return ret;
 }

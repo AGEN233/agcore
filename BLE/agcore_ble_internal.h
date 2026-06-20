@@ -1,4 +1,5 @@
 #pragma once
+#ifdef CONFIG_AGCORE_BLE_ENABLE
 
 #include "agcore_ble.h"
 #include "os/os_cputime.h"
@@ -11,9 +12,6 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "agcore_printf_log.h"
-
-#ifdef CONFIG_AGCORE_BLE_ENABLE
-
 // raw data
 extern agcore_ble_data_cb_t g_agcore_ble_data_cb;
 esp_err_t agcore_ble_notify(const uint8_t *data, uint16_t len);

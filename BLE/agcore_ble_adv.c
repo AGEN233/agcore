@@ -34,23 +34,7 @@ static const struct ble_gap_adv_params s_agcore_ble_adv_params = {
  */
 static void agcore_ble_adv_fill_device_info(uint8_t *buf)
 {
-    for (uint16_t i = 0; i < 8; i++) {
-        buf[i] = (i % 2 == 0) ? 0x00 : 0xFF;
-    }
-
-    if (!agcore_device_info_is_set()) {
-        return;
-    }
-
-    const agcore_device_info_st *info = agcore_get_device_info();
-    buf[0] = (uint8_t)(info->device_type >> 8);
-    buf[1] = (uint8_t)(info->device_type);
-    buf[2] = (uint8_t)(info->device_id >> 8);
-    buf[3] = (uint8_t)(info->device_id);
-    buf[4] = (uint8_t)(info->fw_version >> 8);
-    buf[5] = (uint8_t)(info->fw_version);
-    buf[6] = (uint8_t)(info->hw_version >> 8);
-    buf[7] = (uint8_t)(info->hw_version);
+    agcore_device_info_get_bytes(buf, 8);
 }
 
 /**

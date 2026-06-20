@@ -61,7 +61,7 @@ AGCORE + device_type + device_id + fw_version + hw_version
 - `fw_version`: 固件版本，2 字节。
 - `hw_version`: 硬件版本，2 字节。
 
-如果应用层还没有调用 `agcore_set_device_info()` 设置设备信息，AGCORE 会为广播设备字段填充默认字节：
+如果应用层还没有调用 `agcore_device_info_set()` 设置设备信息，AGCORE 会为广播设备字段填充默认字节：
 
 ```text
 00 FF 00 FF 00 FF 00 FF

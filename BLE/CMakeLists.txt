@@ -1,15 +1,11 @@
-list(APPEND AGCORE_SRCS
-    "BLE/agcore_ble.c"
-    "BLE/agcore_ble_adv.c"
-    "BLE/agcore_ble_data.c"
-    "BLE/agcore_ble_gap.c"
-    "BLE/agcore_ble_gatt.c"
+target_sources(${COMPONENT_LIB} PRIVATE
+    "agcore_ble.c"
+    "agcore_ble_adv.c"
+    "agcore_ble_data.c"
+    "agcore_ble_gap.c"
+    "agcore_ble_gatt.c"
 )
 
-list(APPEND AGCORE_INCLUDE_DIRS
-    "BLE"
-)
-
-list(APPEND AGCORE_REQUIRES
-    bt
+target_include_directories(${COMPONENT_LIB} PUBLIC
+    "."
 )

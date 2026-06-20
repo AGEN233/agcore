@@ -30,11 +30,11 @@ configure_file(
     @ONLY
 )
 
-list(APPEND AGCORE_SRCS
-    "Version/agcore_version.c"
+target_sources(${COMPONENT_LIB} PRIVATE
+    "agcore_version.c"
 )
 
-list(APPEND AGCORE_INCLUDE_DIRS
+target_include_directories(${COMPONENT_LIB} PUBLIC
     "${AGCORE_VERSION_GENERATED_DIR}"
-    "Version"
+    "."
 )

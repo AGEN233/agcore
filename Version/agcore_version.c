@@ -14,6 +14,9 @@ static bool s_agcore_device_info_is_set = false;
 static const agcore_version_info_st s_agcore_version_info = {
     .version = AGCORE_VERSION,
     .id = AGCORE_ID,
+    .git_hash = AGCORE_GIT_HASH,
+    .git_branch = AGCORE_GIT_BRANCH,
+    .build_time = AGCORE_BUILD_TIME,
 };
 
 /**

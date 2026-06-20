@@ -5,6 +5,10 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#define AGCORE_GIT_HASH      "@AGCORE_GIT_HASH@"
+#define AGCORE_GIT_BRANCH    "@AGCORE_GIT_BRANCH@"
+#define AGCORE_BUILD_TIME    "@AGCORE_BUILD_TIME@"
+
 #ifndef AGCORE_VERSION
 #define AGCORE_VERSION       0x01
 #endif
@@ -27,6 +31,9 @@ typedef struct {
 typedef struct {
     uint16_t version;
     uint16_t id;
+    const char *git_hash;
+    const char *git_branch;
+    const char *build_time;
 } agcore_version_info_st;
 
 void agcore_device_info_set(const agcore_device_info_st *info);

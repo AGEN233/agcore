@@ -1,7 +1,7 @@
-list(APPEND AGCORE_INCLUDE_DIRS
-    "Utils"
+target_sources(${COMPONENT_LIB} PRIVATE
+    "agcore_utils.c"
 )
 
-list(APPEND AGCORE_SRCS
-    "Utils/agcore_utils.c"
+target_include_directories(${COMPONENT_LIB} PUBLIC
+    "."
 )

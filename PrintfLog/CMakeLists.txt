@@ -1,3 +1,3 @@
-list(APPEND AGCORE_INCLUDE_DIRS
-    "PrintfLog"
+target_include_directories(${COMPONENT_LIB} PUBLIC
+    "."
 )

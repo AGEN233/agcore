@@ -1,0 +1,107 @@
+menu "ST7735 Configuration"
+
+choice DISPLAY_ST7735_SPI_HOST
+    prompt "SPI host"
+    default DISPLAY_ST7735_SPI2_HOST
+
+config DISPLAY_ST7735_SPI2_HOST
+    bool "SPI2_HOST"
+
+config DISPLAY_ST7735_SPI3_HOST
+    bool "SPI3_HOST"
+    depends on SOC_SPI_PERIPH_NUM > 2
+
+endchoice
+
+config DISPLAY_ST7735_GPIO_MOSI
+    int "MOSI GPIO"
+    range -1 48
+    default -1
+
+config DISPLAY_ST7735_GPIO_SCLK
+    int "SCLK GPIO"
+    range -1 48
+    default -1
+
+config DISPLAY_ST7735_GPIO_CS
+    int "CS GPIO"
+    range -1 48
+    default -1
+
+config DISPLAY_ST7735_GPIO_DC
+    int "DC GPIO"
+    range -1 48
+    default -1
+
+config DISPLAY_ST7735_GPIO_RST
+    int "Reset GPIO (-1 to disable)"
+    range -1 48
+    default -1
+
+config DISPLAY_ST7735_GPIO_BACKLIGHT
+    int "Backlight GPIO (-1 to disable)"
+    range -1 48
+    default -1
+
+config DISPLAY_ST7735_PIXEL_CLOCK_HZ
+    int "Pixel clock (Hz)"
+    range 1 80000000
+    default 40000000
+
+config DISPLAY_ST7735_WIDTH
+    int "Display width"
+    range 1 65535
+    default 128
+
+config DISPLAY_ST7735_HEIGHT
+    int "Display height"
+    range 1 65535
+    default 160
+
+config DISPLAY_ST7735_X_OFFSET
+    int "X offset"
+    range 0 65535
+    default 0
+
+config DISPLAY_ST7735_Y_OFFSET
+    int "Y offset"
+    range 0 65535
+    default 0
+
+choice DISPLAY_ST7735_BACKLIGHT_ACTIVE_LEVEL
+    prompt "Backlight active level"
+    default DISPLAY_ST7735_BACKLIGHT_ACTIVE_HIGH
+
+config DISPLAY_ST7735_BACKLIGHT_ACTIVE_HIGH
+    bool "Active high"
+
+config DISPLAY_ST7735_BACKLIGHT_ACTIVE_LOW
+    bool "Active low"
+
+endchoice
+
+choice DISPLAY_ST7735_COLOR_INVERSION
+    prompt "Display color Inversion"
+    default DISPLAY_ST7735_NORMAL_COLOR
+
+config DISPLAY_ST7735_NORMAL_COLOR
+    bool "Normal"
+
+config DISPLAY_ST7735_INVERT_COLOR
+    bool "Inverted"
+
+endchoice
+
+choice DISPLAY_ST7735_COLOR_ORDER
+    prompt "Display color order"
+    default DISPLAY_ST7735_BGR_ORDER
+
+config DISPLAY_ST7735_RGB_ORDER
+    bool "RGB"
+
+config DISPLAY_ST7735_BGR_ORDER
+    bool "BGR"
+
+endchoice
+
+endmenu

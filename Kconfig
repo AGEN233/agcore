@@ -3,5 +3,6 @@ menu "AGCORE CONFIG"
 rsource "BLE/Kconfig"
 rsource "PrintfLog/Kconfig"
 rsource "PixelDriver/Kconfig"
+rsource "DisplayDriver/Kconfig"
 
 endmenu

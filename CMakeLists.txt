@@ -16,6 +16,7 @@ set(AGCORE_REQUIRES
     esp_driver_gpio
     esp_driver_rmt
     esp_driver_spi
+    esp_lcd
 )
 
 idf_component_register(
@@ -26,6 +27,7 @@ idf_component_register(
 
 add_subdirectory(PrintfLog)
 add_subdirectory(PixelDriver)
+add_subdirectory(DisplayDriver)
 add_subdirectory(BLE)
 add_subdirectory(Utils)
 add_subdirectory(Version)

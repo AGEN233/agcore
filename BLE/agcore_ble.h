@@ -29,6 +29,7 @@ void agcore_ble_adv_stop(void);
 void agcore_ble_adv_update(void);
 
 // link state
+bool agcore_ble_is_ready(void);
 bool agcore_ble_is_connected(void);
 uint16_t agcore_ble_get_mtu(void);
 

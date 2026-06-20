@@ -2,6 +2,8 @@
 #include "sdkconfig.h"
 
 #ifdef CONFIG_AGCORE_BLE_ENABLE
+#include <stdatomic.h>
+
 #include "agcore_ble.h"
 #include "agcore_ble_internal.h"
 #include "nimble/nimble_port.h"
@@ -15,6 +17,7 @@
 
 static TaskHandle_t s_agcore_ble_host_handle = NULL;
 static uint8_t s_agcore_ble_addr_type = 0;
+static atomic_bool s_agcore_ble_ready = false;
 
 
 /**
@@ -28,6 +31,11 @@ static uint8_t s_agcore_ble_addr_type = 0;
 uint8_t agcore_ble_get_addr_type(void)
 {
     return s_agcore_ble_addr_type;
+}
+
+bool agcore_ble_is_ready(void)
+{
+    return atomic_load(&s_agcore_ble_ready);
 }
 
 /**
@@ -45,7 +53,7 @@ void agcore_ble_get_addr(uint8_t *addr)
  */
 static void agcore_ble_on_stack_reset_cb(int reason)
 {
-
+    atomic_store(&s_agcore_ble_ready, false);
 }
 
 /**
@@ -54,11 +62,28 @@ static void agcore_ble_on_stack_reset_cb(int reason)
 static void agcore_ble_on_stack_sync_cb(void)
 {
     CORE_LOGD(TAG, "host sync success");
+
+    int ret = ble_hs_id_infer_auto(0, &s_agcore_ble_addr_type);
+    if (ret != 0) {
+        CORE_LOGE(TAG, "infer address type failed|%d", ret);
+        return;
+    }
+
+    uint8_t mac[6];
+    ret = ble_hs_id_copy_addr(s_agcore_ble_addr_type, mac, NULL);
+    if (ret != 0) {
+        CORE_LOGE(TAG, "copy address failed|%d", ret);
+        return;
+    }
+
+    CORE_LOGI(TAG, "ble address: %02X:%02X:%02X:%02X:%02X:%02X", mac[5], mac[4], mac[3], mac[2], mac[1], mac[0]);
+
     agcore_ble_gap_init();
     agcore_ble_gatt_init();
     agcore_ble_adv_init();
     agcore_ble_adv_update();
     agcore_ble_adv_start();
+    atomic_store(&s_agcore_ble_ready, true);
 }
 
 /**
@@ -107,15 +132,6 @@ static esp_err_t agcore_ble_nimble_init(void)
             CORE_LOGE(TAG, "host task create failed");
             return ESP_ERR_NO_MEM;
         }
-    }
-
-    s_agcore_ble_addr_type  = BLE_ADDR_PUBLIC;
-    uint8_t mac[6];
-    if (ble_hs_id_copy_addr(s_agcore_ble_addr_type, mac, NULL) != 0) {
-        CORE_LOGW(TAG, "public address unavailable, fallback to random");
-        s_agcore_ble_addr_type = BLE_ADDR_RANDOM;
-    } else {
-        CORE_LOGI(TAG, "ble address: %02X:%02X:%02X:%02X:%02X:%02X", mac[5], mac[4], mac[3], mac[2], mac[1], mac[0]);
     }
 
     return ESP_OK;

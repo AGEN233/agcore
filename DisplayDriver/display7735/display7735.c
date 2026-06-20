@@ -40,21 +40,24 @@
 #define ST7735_BGR_ORDER false
 #endif
 
-static esp_lcd_panel_io_handle_t s_panel_io;
-static bool s_initialized;
-static TaskHandle_t s_test_task_handle;
-static display_st7735_flush_done_cb_t s_flush_done_cb;
+static display_st7735_runtime_st s_runtime = {
+    .width = CONFIG_DISPLAY_ST7735_WIDTH,
+    .height = CONFIG_DISPLAY_ST7735_HEIGHT,
+    .rotation = DISPLAY_ST7735_ROTATION_0,
+};
 
-static bool st7735_color_trans_done(esp_lcd_panel_io_handle_t panel_io,
-                                    esp_lcd_panel_io_event_data_t *edata,
-                                    void *user_ctx)
+
+/**
+ * @brief SPI 发送完成会回调
+ */
+static bool st7735_color_trans_done(esp_lcd_panel_io_handle_t panel_io, esp_lcd_panel_io_event_data_t *edata, void *user_ctx)
 {
     (void)panel_io;
     (void)edata;
     (void)user_ctx;
 
-    if (s_flush_done_cb != NULL) {
-        s_flush_done_cb();
+    if (s_runtime.flush_done_cb != NULL) {
+        s_runtime.flush_done_cb();
     }
     return false;
 }
@@ -68,7 +71,7 @@ static bool st7735_color_trans_done(esp_lcd_panel_io_handle_t panel_io,
  */
 static esp_err_t st7735_write(uint8_t command, const void *data, size_t size)
 {
-    esp_err_t ret = esp_lcd_panel_io_tx_param(s_panel_io, command, data, size);
+    esp_err_t ret = esp_lcd_panel_io_tx_param(s_runtime.panel_io, command, data, size);
     if (ret != ESP_OK) {
         CORE_LOGE(TAG, "write cmd 0x%02X error(%d)| %s", command, ret, esp_err_to_name(ret));
     }
@@ -90,6 +93,77 @@ esp_err_t display_st7735_set_backlight(bool enabled)
 }
 
 /**
+ * @brief 7735设置运行时屏幕方向
+ * @param rotation
+ * @return esp_err_t
+ */
+esp_err_t display_st7735_set_rotation(display_st7735_rotation_et rotation)
+{
+    if (!s_runtime.initialized) {
+        return ESP_ERR_INVALID_STATE;
+    }
+
+    uint8_t madctl = ST7735_BGR_ORDER ? LCD_CMD_BGR_BIT : 0;
+    switch (rotation) {
+        case DISPLAY_ST7735_ROTATION_0:
+            break;
+        case DISPLAY_ST7735_ROTATION_90:
+            madctl |= LCD_CMD_MV_BIT | LCD_CMD_MX_BIT;
+            break;
+        case DISPLAY_ST7735_ROTATION_180:
+            madctl |= LCD_CMD_MX_BIT | LCD_CMD_MY_BIT;
+            break;
+        case DISPLAY_ST7735_ROTATION_270:
+            madctl |= LCD_CMD_MV_BIT | LCD_CMD_MY_BIT;
+            break;
+        default:
+            return ESP_ERR_INVALID_ARG;
+    }
+
+    esp_err_t ret = st7735_write(LCD_CMD_MADCTL, &madctl, sizeof(madctl));
+    if (ret == ESP_OK) {
+        s_runtime.rotation = rotation;
+        if (rotation == DISPLAY_ST7735_ROTATION_90 || rotation == DISPLAY_ST7735_ROTATION_270) {
+            s_runtime.width = CONFIG_DISPLAY_ST7735_HEIGHT;
+            s_runtime.height = CONFIG_DISPLAY_ST7735_WIDTH;
+        } else {
+            s_runtime.width = CONFIG_DISPLAY_ST7735_WIDTH;
+            s_runtime.height = CONFIG_DISPLAY_ST7735_HEIGHT;
+        }
+        CORE_LOGI(TAG, "rotation=%d madctl=0x%02X size=%ux%u", rotation, madctl, s_runtime.width, s_runtime.height);
+    }
+    return ret;
+}
+
+/**
+ * @brief 获取运行时方向
+ * @return display_st7735_rotation_et
+ */
+display_st7735_rotation_et display_st7735_get_rotation(void)
+{
+    return s_runtime.rotation;
+}
+
+/**
+ * @brief 获取运行时屏幕宽度
+ * @return uint16_t
+ */
+uint16_t display_st7735_get_width(void)
+{
+    return s_runtime.width;
+}
+
+
+/**
+ * @brief 获取运行时屏幕高度
+ * @return uint16_t
+ */
+uint16_t display_st7735_get_height(void)
+{
+    return s_runtime.height;
+}
+
+/**
  * @brief 刷新一块 RGB565 像素区域到 ST7735 显存
  *
  * 坐标采用左闭右开：
@@ -98,13 +172,13 @@ esp_err_t display_st7735_set_backlight(bool enabled)
  */
 esp_err_t display_st7735_flush(uint16_t x_start, uint16_t y_start, uint16_t x_end, uint16_t y_end, const void *rgb565_data)
 {
-    if (!s_initialized) {
+    if (!s_runtime.initialized) {
         CORE_LOGE(TAG, "display is not initialized");
         return ESP_ERR_INVALID_STATE;
     }
 
     if (rgb565_data == NULL || x_start >= x_end || y_start >= y_end ||
-            x_end > CONFIG_DISPLAY_ST7735_WIDTH || y_end > CONFIG_DISPLAY_ST7735_HEIGHT) {
+            x_end > display_st7735_get_width() || y_end > display_st7735_get_height()) {
         CORE_LOGE(TAG, "invalid bitmap region");
         return ESP_ERR_INVALID_ARG;
     }
@@ -137,7 +211,7 @@ esp_err_t display_st7735_flush(uint16_t x_start, uint16_t y_start, uint16_t x_en
         return ret;
     }
 
-    ret = esp_lcd_panel_io_tx_color(s_panel_io, LCD_CMD_RAMWR, rgb565_data, (size_t)draw_w * draw_h * sizeof(uint16_t));
+    ret = esp_lcd_panel_io_tx_color(s_runtime.panel_io, LCD_CMD_RAMWR, rgb565_data, (size_t)draw_w * draw_h * sizeof(uint16_t));
 
     if (ret != ESP_OK) {
         CORE_LOGE(TAG, "draw bitmap error(%d)| %s", ret, esp_err_to_name(ret));
@@ -185,11 +259,11 @@ static void st7735_test_task(void *arg)
  */
 esp_err_t display_st7735_test(void)
 {
-    if (s_test_task_handle != NULL) {
+    if (s_runtime.test_task_handle != NULL) {
         return ESP_ERR_INVALID_STATE;
     }
 
-    if (!s_initialized) {
+    if (!s_runtime.initialized) {
         esp_err_t ret = display_st7735_init(NULL);
         if (ret != ESP_OK) {
             return ret;
@@ -203,10 +277,10 @@ esp_err_t display_st7735_test(void)
         return ESP_ERR_NO_MEM;
     }
 
-    BaseType_t task_result = xTaskCreate(st7735_test_task, "st7735_test", (3 * 1024),  frame_buffer,  5, &s_test_task_handle);
+    BaseType_t task_result = xTaskCreate(st7735_test_task, "st7735_test", (3 * 1024),  frame_buffer,  5, &s_runtime.test_task_handle);
     if (task_result != pdPASS) {
         heap_caps_free(frame_buffer);
-        s_test_task_handle = NULL;
+        s_runtime.test_task_handle = NULL;
         CORE_LOGE(TAG, "failed to create display test task");
         return ESP_ERR_NO_MEM;
     }
@@ -328,37 +402,37 @@ esp_err_t display_st7735_init(display_st7735_flush_done_cb_t cb)
 {
     esp_err_t ret = ESP_OK;
 
-    if (s_initialized) {
+    if (s_runtime.initialized) {
         CORE_LOGE(TAG, "display already initialized");
         return ESP_ERR_INVALID_STATE;
     }
 
     if (CONFIG_DISPLAY_ST7735_GPIO_MOSI <= GPIO_NUM_NC || CONFIG_DISPLAY_ST7735_GPIO_SCLK <= GPIO_NUM_NC ||
-        CONFIG_DISPLAY_ST7735_GPIO_CS   <= GPIO_NUM_NC || CONFIG_DISPLAY_ST7735_GPIO_DC   <= GPIO_NUM_NC) {
+            CONFIG_DISPLAY_ST7735_GPIO_CS   <= GPIO_NUM_NC || CONFIG_DISPLAY_ST7735_GPIO_DC   <= GPIO_NUM_NC) {
 
         CORE_LOGE(TAG, "display GPIO is not configured in menuconfig");
         return ESP_ERR_INVALID_ARG;
     }
 
-    s_flush_done_cb = cb;
+    s_runtime.flush_done_cb = cb;
 
-    #if CONFIG_DISPLAY_ST7735_GPIO_BACKLIGHT > GPIO_NUM_NC
-        gpio_config_t backlight_pin_config = {
-            .pin_bit_mask = 1ULL << CONFIG_DISPLAY_ST7735_GPIO_BACKLIGHT,
-            .mode = GPIO_MODE_OUTPUT,
-            .pull_up_en = GPIO_PULLUP_DISABLE,
-            .pull_down_en = GPIO_PULLDOWN_DISABLE,
-            .intr_type = GPIO_INTR_DISABLE,
-        };
+#if CONFIG_DISPLAY_ST7735_GPIO_BACKLIGHT > GPIO_NUM_NC
+    gpio_config_t backlight_pin_config = {
+        .pin_bit_mask = 1ULL << CONFIG_DISPLAY_ST7735_GPIO_BACKLIGHT,
+        .mode = GPIO_MODE_OUTPUT,
+        .pull_up_en = GPIO_PULLUP_DISABLE,
+        .pull_down_en = GPIO_PULLDOWN_DISABLE,
+        .intr_type = GPIO_INTR_DISABLE,
+    };
 
-        ret = gpio_config(&backlight_pin_config);
-        if (ret != ESP_OK) {
-            CORE_LOGE(TAG, "backlight gpio init error(%d)| %s", ret, esp_err_to_name(ret));
-            return ret;
-        }
+    ret = gpio_config(&backlight_pin_config);
+    if (ret != ESP_OK) {
+        CORE_LOGE(TAG, "backlight gpio init error(%d)| %s", ret, esp_err_to_name(ret));
+        return ret;
+    }
 
-        display_st7735_set_backlight(false);
-    #endif
+    display_st7735_set_backlight(false);
+#endif
 
     spi_bus_config_t bus_config = {
         .mosi_io_num = CONFIG_DISPLAY_ST7735_GPIO_MOSI,
@@ -392,33 +466,33 @@ esp_err_t display_st7735_init(display_st7735_flush_done_cb_t cb)
     ret = esp_lcd_new_panel_io_spi(
               (esp_lcd_spi_bus_handle_t)ST7735_SPI_HOST,
               &io_config,
-              &s_panel_io
+              &s_runtime.panel_io
           );
     if (ret != ESP_OK) {
         CORE_LOGE(TAG, "panel io init error(%d)| %s", ret, esp_err_to_name(ret));
         return ret;
     }
 
-    #if CONFIG_DISPLAY_ST7735_GPIO_RST > GPIO_NUM_NC
-        gpio_config_t reset_pin_config = {
-            .pin_bit_mask = 1ULL << CONFIG_DISPLAY_ST7735_GPIO_RST,
-            .mode = GPIO_MODE_OUTPUT,
-            .pull_up_en = GPIO_PULLUP_DISABLE,
-            .pull_down_en = GPIO_PULLDOWN_DISABLE,
-            .intr_type = GPIO_INTR_DISABLE,
-        };
+#if CONFIG_DISPLAY_ST7735_GPIO_RST > GPIO_NUM_NC
+    gpio_config_t reset_pin_config = {
+        .pin_bit_mask = 1ULL << CONFIG_DISPLAY_ST7735_GPIO_RST,
+        .mode = GPIO_MODE_OUTPUT,
+        .pull_up_en = GPIO_PULLUP_DISABLE,
+        .pull_down_en = GPIO_PULLDOWN_DISABLE,
+        .intr_type = GPIO_INTR_DISABLE,
+    };
 
-        ret = gpio_config(&reset_pin_config);
-        if (ret != ESP_OK) {
-            CORE_LOGE(TAG, "reset gpio init error(%d)| %s", ret, esp_err_to_name(ret));
-            return ret;
-        }
+    ret = gpio_config(&reset_pin_config);
+    if (ret != ESP_OK) {
+        CORE_LOGE(TAG, "reset gpio init error(%d)| %s", ret, esp_err_to_name(ret));
+        return ret;
+    }
 
-        gpio_set_level(CONFIG_DISPLAY_ST7735_GPIO_RST, 0);
-        vTaskDelay(pdMS_TO_TICKS(20));
-        gpio_set_level(CONFIG_DISPLAY_ST7735_GPIO_RST, 1);
-        vTaskDelay(pdMS_TO_TICKS(120));
-    #endif
+    gpio_set_level(CONFIG_DISPLAY_ST7735_GPIO_RST, 0);
+    vTaskDelay(pdMS_TO_TICKS(20));
+    gpio_set_level(CONFIG_DISPLAY_ST7735_GPIO_RST, 1);
+    vTaskDelay(pdMS_TO_TICKS(120));
+#endif
 
     ret = st7735_panel_init();
     if (ret != ESP_OK) {
@@ -426,11 +500,14 @@ esp_err_t display_st7735_init(display_st7735_flush_done_cb_t cb)
         return ret;
     }
 
-    s_initialized = true;
+    s_runtime.initialized = true;
+    s_runtime.width = CONFIG_DISPLAY_ST7735_WIDTH;
+    s_runtime.height = CONFIG_DISPLAY_ST7735_HEIGHT;
+    s_runtime.rotation = DISPLAY_ST7735_ROTATION_0;
 
-    #if CONFIG_DISPLAY_ST7735_GPIO_BACKLIGHT > GPIO_NUM_NC
-        display_st7735_set_backlight(true);
-    #endif
+#if CONFIG_DISPLAY_ST7735_GPIO_BACKLIGHT > GPIO_NUM_NC
+    display_st7735_set_backlight(true);
+#endif
 
     return ESP_OK;
 }

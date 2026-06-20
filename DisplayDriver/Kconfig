@@ -1,0 +1,21 @@
+menu "DisPlay Driver Configuration"
+
+config DISPLAY_DRIVER_ENABLE
+    bool "Enable DisPlay Driver"
+    default n
+
+choice DISPLAY_IC_TYPE
+    prompt "DisPlay IC Type"
+    default DISPLAY_IC_ST7735
+    depends on DISPLAY_DRIVER_ENABLE
+
+config DISPLAY_IC_ST7735
+    bool "ST7735"
+
+endchoice
+
+if DISPLAY_IC_ST7735
+rsource "display7735/display7735_kconfig"
+endif
+
+endmenu

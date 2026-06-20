@@ -9,12 +9,13 @@
 #include "agcore_datachannel.h"
 #include "agcore_utils.h"
 
-#define AGCORE_VERSION       0x01
+#define AGCORE_VERSION       0x02
 #define AGCORE_ID            0x01
 #define AGCORE_VRESION       AGCORE_VERSION
 
 #include "agcore_version.h"
 #include "pixel_driver.h"
+#include "display_driver.h"
 #include "agcore_ble.h"
 
 void agcore_init(void);

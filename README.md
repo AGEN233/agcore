@@ -13,27 +13,27 @@ AGCORE 是个人 DIY 项目中沉淀出来的一套 ESP-IDF 适配抽离层。
 
 ## 模块组成
 
-- `BLE/`
+- `ble/`
 
   统一 BLE 广播、GAP、GATT 和数据收发能力。
 
-- `DataChannel/`
+- `data_channel/`
 
   统一数据路由入口，负责把来自 BLE、Wi-Fi、UART 等链路的数据整理成同一种数据结构，再交给应用层处理。
 
-- `PixelDriver/`
+- `pixel_driver/`
 
   ARGB 可寻址 LED 驱动抽象层，目前包含 WS2812B 相关实现。
 
-- `PrintfLog/`
+- `log/`
 
   统一日志输出封装。
 
-- `Utils/`
+- `utils/`
 
   校验和通用工具函数。
 
-- `Version/`
+- `version/`
 
   设备信息和 AGCORE 版本信息管理。
 

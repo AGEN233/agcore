@@ -1,8 +1,8 @@
 menu "AGCORE CONFIG"
 
-rsource "BLE/Kconfig"
-rsource "PrintfLog/Kconfig"
-rsource "PixelDriver/Kconfig"
-rsource "DisplayDriver/Kconfig"
+rsource "ble/Kconfig"
+rsource "log/Kconfig"
+rsource "pixel_driver/Kconfig"
+rsource "display_driver/Kconfig"
 
 endmenu

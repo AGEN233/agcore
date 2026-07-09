@@ -10,8 +10,8 @@
 #include "agcore_utils.h"
 
 #define AGCORE_VERSION_MAJOR    0
-#define AGCORE_VERSION_MINOR    3
-#define AGCORE_VERSION_PATCH    3
+#define AGCORE_VERSION_MINOR    4
+#define AGCORE_VERSION_PATCH    0
 
 #define AGCORE_VERSION       0x02
 #define AGCORE_ID            0x01

@@ -510,6 +510,12 @@ esp_err_t display_st7735_init(display_st7735_flush_done_cb_t cb)
     s_runtime.height = CONFIG_DISPLAY_ST7735_HEIGHT;
     s_runtime.rotation = DISPLAY_ST7735_ROTATION_0;
 
+    ret = display_st7735_set_rotation(DISPLAY_ST7735_ROTATION_180);
+    if (ret != ESP_OK) {
+        CORE_LOGE(TAG, "st7735 set default rotation error(%d)| %s", ret, esp_err_to_name(ret));
+        return ret;
+    }
+
 #if CONFIG_DISPLAY_ST7735_GPIO_BACKLIGHT > GPIO_NUM_NC
     display_st7735_set_backlight(true);
 #endif

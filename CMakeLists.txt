@@ -1,12 +1,12 @@
 set(AGCORE_SRCS
     "agcore.c"
-    "DataChannel/agcore_data_queue.c"
-    "DataChannel/agcore_dataevent_route.c"
+    "data_channel/agcore_data_queue.c"
+    "data_channel/agcore_dataevent_route.c"
 )
 
 set(AGCORE_INCLUDE_DIRS
     "."
-    "DataChannel"
+    "data_channel"
 )
 
 set(AGCORE_REQUIRES
@@ -25,9 +25,9 @@ idf_component_register(
     REQUIRES ${AGCORE_REQUIRES}
 )
 
-add_subdirectory(PrintfLog)
-add_subdirectory(PixelDriver)
-add_subdirectory(DisplayDriver)
-add_subdirectory(BLE)
-add_subdirectory(Utils)
-add_subdirectory(Version)
+add_subdirectory(log)
+add_subdirectory(pixel_driver)
+add_subdirectory(display_driver)
+add_subdirectory(ble)
+add_subdirectory(utils)
+add_subdirectory(version)

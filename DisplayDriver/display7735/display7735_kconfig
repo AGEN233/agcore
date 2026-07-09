@@ -16,37 +16,37 @@ endchoice
 config DISPLAY_ST7735_GPIO_MOSI
     int "MOSI GPIO"
     range -1 48
-    default -1
+    default 13
 
 config DISPLAY_ST7735_GPIO_SCLK
     int "SCLK GPIO"
     range -1 48
-    default -1
+    default 14
 
 config DISPLAY_ST7735_GPIO_CS
     int "CS GPIO"
     range -1 48
-    default -1
+    default 10
 
 config DISPLAY_ST7735_GPIO_DC
     int "DC GPIO"
     range -1 48
-    default -1
+    default 11
 
 config DISPLAY_ST7735_GPIO_RST
     int "Reset GPIO (-1 to disable)"
     range -1 48
-    default -1
+    default 12
 
 config DISPLAY_ST7735_GPIO_BACKLIGHT
     int "Backlight GPIO (-1 to disable)"
     range -1 48
-    default -1
+    default 9
 
 config DISPLAY_ST7735_PIXEL_CLOCK_HZ
     int "Pixel clock (Hz)"
     range 1 80000000
-    default 40000000
+    default 20000000
 
 config DISPLAY_ST7735_WIDTH
     int "Display width"
@@ -56,17 +56,17 @@ config DISPLAY_ST7735_WIDTH
 config DISPLAY_ST7735_HEIGHT
     int "Display height"
     range 1 65535
-    default 160
+    default 128
 
 config DISPLAY_ST7735_X_OFFSET
     int "X offset"
     range 0 65535
-    default 0
+    default 2
 
 config DISPLAY_ST7735_Y_OFFSET
     int "Y offset"
     range 0 65535
-    default 0
+    default 1
 
 choice DISPLAY_ST7735_BACKLIGHT_ACTIVE_LEVEL
     prompt "Backlight active level"

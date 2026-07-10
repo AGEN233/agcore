@@ -182,10 +182,18 @@ esp_err_t display_st7789_flush(uint16_t x_start, uint16_t y_start, uint16_t x_en
     const uint16_t draw_w = x_end - x_start;
     const uint16_t draw_h = y_end - y_start;
 
-    const uint16_t x0 = x_start + CONFIG_DISPLAY_ST7789_X_OFFSET;
-    const uint16_t x1 = x_end - 1 + CONFIG_DISPLAY_ST7789_X_OFFSET;
-    const uint16_t y0 = y_start + CONFIG_DISPLAY_ST7789_Y_OFFSET;
-    const uint16_t y1 = y_end - 1 + CONFIG_DISPLAY_ST7789_Y_OFFSET;
+    uint16_t x_offset = CONFIG_DISPLAY_ST7789_X_OFFSET;
+    uint16_t y_offset = CONFIG_DISPLAY_ST7789_Y_OFFSET;
+    if (s_runtime.rotation == DISPLAY_ST7789_ROTATION_90 ||
+            s_runtime.rotation == DISPLAY_ST7789_ROTATION_270) {
+        x_offset = CONFIG_DISPLAY_ST7789_Y_OFFSET;
+        y_offset = CONFIG_DISPLAY_ST7789_X_OFFSET;
+    }
+
+    const uint16_t x0 = x_start + x_offset;
+    const uint16_t x1 = x_end - 1 + x_offset;
+    const uint16_t y0 = y_start + y_offset;
+    const uint16_t y1 = y_end - 1 + y_offset;
 
     const uint8_t columns[] = {
         x0 >> 8, x0 & 0xFF,

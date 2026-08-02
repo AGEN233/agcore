@@ -1,0 +1,8 @@
+menu "Shell Configuration"
+
+# 待 esh 接入后在此添加配置项
+# config AGCORE_SHELL_ENABLE
+#     bool "Enable esh shell"
+#     default n
+
+endmenu

@@ -161,14 +161,6 @@ void agcore_ble_adv_update(void)
         CORE_LOGE(TAG, "set adv fields failed|%d", ret);
         return;
     }
-
-    /*
-     * Scan Response
-     * --------------------------------------------------
-     * UUID16 List
-     * Manufacturer Data:
-     * AGCORE + device_type + device_id + fw_version + hw_version
-     */
     uint8_t mfg_data[14];
 
     memcpy(mfg_data, "AGCORE", 6);
@@ -192,18 +184,8 @@ void agcore_ble_adv_update(void)
         return;
     }
 
-    CORE_LOGI(TAG, "BLE ADV UPDATE");
-    CORE_LOGD(TAG, "ADV DATA|name:%s tx:%ddBm device:%02X%02X%02X%02X%02X%02X%02X%02X",
-              name,
-              agcore_ble_get_tx_power_dbm(),
-              mfg_data[6],
-              mfg_data[7],
-              mfg_data[8],
-              mfg_data[9],
-              mfg_data[10],
-              mfg_data[11],
-              mfg_data[12],
-              mfg_data[13]);
+    CORE_LOGI(TAG, "ble adv update");
+    CORE_LOGD(TAG, "ble name:%s tx:%ddBm", name, agcore_ble_get_tx_power_dbm());
 }
 
 /**

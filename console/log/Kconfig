@@ -2,12 +2,12 @@ menu "Printf Log Configuration"
 
 config AGCORE_CORELOG_LEVEL
     int "Core Log Level"
-    default 2
+    default 3
     range 0 4
 
 config AGCORE_APPLOG_LEVEL
     int "App Log Level"
-    default 2
+    default 4
     range 0 4
 
 endmenu

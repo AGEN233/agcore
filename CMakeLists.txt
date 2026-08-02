@@ -1,7 +1,9 @@
 set(AGCORE_SRCS
     "agcore.c"
+    "data_channel/agcore_data_encode.c"
     "data_channel/agcore_data_queue.c"
     "data_channel/agcore_dataevent_route.c"
+    "data_channel/agcore_datevent_handle.c"
 )
 
 set(AGCORE_INCLUDE_DIRS
@@ -16,7 +18,9 @@ set(AGCORE_REQUIRES
     esp_driver_gpio
     esp_driver_rmt
     esp_driver_spi
+    esp_driver_uart
     esp_lcd
+    freertos
 )
 
 idf_component_register(
@@ -25,7 +29,7 @@ idf_component_register(
     REQUIRES ${AGCORE_REQUIRES}
 )
 
-add_subdirectory(log)
+add_subdirectory(console)
 add_subdirectory(pixel_driver)
 add_subdirectory(display_driver)
 add_subdirectory(BLE)

@@ -76,7 +76,7 @@ static void agcore_ble_on_stack_sync_cb(void)
         return;
     }
 
-    CORE_LOGI(TAG, "ble address: %02X:%02X:%02X:%02X:%02X:%02X", mac[5], mac[4], mac[3], mac[2], mac[1], mac[0]);
+    CORE_LOGI(TAG, "ble mac: %02X:%02X:%02X:%02X:%02X:%02X", mac[5], mac[4], mac[3], mac[2], mac[1], mac[0]);
 
     agcore_ble_gap_init();
     agcore_ble_gatt_init();
@@ -144,6 +144,8 @@ static esp_err_t agcore_ble_nimble_init(void)
 esp_err_t agcore_ble_init(void)
 {
     #ifdef CONFIG_AGCORE_BLE_ENABLE
+        agcore_data_send_register(AGCORE_DATA_LINK_BLE, agcore_ble_notify);
+
         esp_err_t ret =  agcore_ble_nimble_init();
         if (ret != ESP_OK) {
             return ESP_FAIL;

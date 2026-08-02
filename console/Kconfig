@@ -1,0 +1,6 @@
+menu "Console Configuration"
+
+rsource "log/Kconfig"
+rsource "shell/Kconfig"
+
+endmenu

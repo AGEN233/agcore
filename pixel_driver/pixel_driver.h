@@ -5,7 +5,7 @@
 #include "string.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-#include "agcore_printf_log.h"
+#include "agcore_log_adapter.h"
 
 void pixel_drv_set_led_len(uint16_t len);
 void pixel_drv_sendata(const uint8_t *color_data, uint16_t len);

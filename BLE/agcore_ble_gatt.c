@@ -46,9 +46,8 @@ static int agcore_ble_gatt_write_cb(uint16_t conn_handle, uint16_t attr_handle, 
     uint8_t *data = ctxt->om->om_data;
     uint16_t len = ctxt->om->om_len;
 
-    if (g_agcore_ble_data_cb) {
-        g_agcore_ble_data_cb(data, len);
-    }
+    CORE_LOGD(TAG, "write|conn=%u attr=%u len=%u", conn_handle, attr_handle, len);
+    agcore_ble_rx_data_handle(data, len);
 
     return 0;
 }
@@ -66,7 +65,7 @@ static const struct ble_gatt_svc_def s_agcore_ble_gatt_svcs[] = {
             {
                 .uuid = &s_agcore_ble_chr_control_write.u,
                 .access_cb = agcore_ble_gatt_write_cb,
-                .flags = BLE_GATT_CHR_F_WRITE,
+                .flags = BLE_GATT_CHR_F_WRITE | BLE_GATT_CHR_F_WRITE_NO_RSP,
             }, {
                 .uuid = &s_agcore_ble_chr_control_notify.u,
                 .access_cb = agcore_ble_gatt_dummy_cb,

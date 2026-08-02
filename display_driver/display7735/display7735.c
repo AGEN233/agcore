@@ -4,7 +4,7 @@
 
 #include "display7735.h"
 
-#include "agcore_printf_log.h"
+#include "agcore_log_adapter.h"
 #include "driver/gpio.h"
 #include "driver/spi_master.h"
 #include "esp_heap_caps.h"

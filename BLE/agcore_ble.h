@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include "esp_err.h"
+#include "agcore_datachannel.h"
 
 /**
  * @brief 广播数据
@@ -16,12 +17,8 @@ typedef struct {
     uint16_t  ic2_fw_version;
 } agcore_ble_adv_data_st;
 
-// callback
-typedef void (*agcore_ble_data_cb_t)(const uint8_t *data, uint16_t len);
-
-// raw data
-esp_err_t agcore_ble_send_data(const uint8_t *data, uint16_t len);
-void agcore_ble_register_data_callback(agcore_ble_data_cb_t cb);
+// data
+void agcore_ble_rx_data_handle(const uint8_t *data, uint16_t len);
 
 // advertising
 void agcore_ble_adv_start(void);

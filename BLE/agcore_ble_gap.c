@@ -32,6 +32,7 @@ static void agcore_ble_gap_connect_handle(struct ble_gap_event *event)
     if (event->connect.status == 0) {
         s_agcore_ble_connected = true;
         g_agcore_ble_conn_handle = event->connect.conn_handle;
+        agcore_data_link_reset(AGCORE_DATA_LINK_BLE);
 
         struct ble_gap_conn_desc conn_desc;
         if (ble_gap_conn_find(g_agcore_ble_conn_handle, &conn_desc) == 0) {
@@ -57,6 +58,7 @@ static void agcore_ble_gap_disconnect_handle(void)
     ble_npl_callout_stop(&s_agcore_ble_mtu_callout);
     s_agcore_ble_connected = false;
     g_agcore_ble_conn_handle = BLE_HS_CONN_HANDLE_NONE;
+    agcore_data_link_reset(AGCORE_DATA_LINK_BLE);
     agcore_ble_adv_update();
     agcore_ble_adv_start();
     CORE_LOGD(TAG, "disconnected");

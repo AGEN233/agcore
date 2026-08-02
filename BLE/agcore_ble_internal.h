@@ -2,6 +2,7 @@
 #ifdef CONFIG_AGCORE_BLE_ENABLE
 
 #include "agcore_ble.h"
+#include "agcore_version.h"
 #include "os/os_cputime.h"
 #include "nimble/ble.h"
 #include "nimble/nimble_port.h"
@@ -11,10 +12,9 @@
 #include "services/gap/ble_svc_gap.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-#include "agcore_printf_log.h"
-// raw data
-extern agcore_ble_data_cb_t g_agcore_ble_data_cb;
+#include "agcore_log_adapter.h"
 esp_err_t agcore_ble_notify(const uint8_t *data, uint16_t len);
+void agcore_ble_rx_data_handle(const uint8_t *data, uint16_t len);
 
 // gatt
 extern uint16_t g_agcore_ble_notify_handle;

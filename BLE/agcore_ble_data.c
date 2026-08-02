@@ -4,11 +4,13 @@
 
 #include "agcore_ble.h"
 #include "agcore_ble_internal.h"
+#include "agcore_data_encode.h"
 
 #define TAG "BLE_DATA"
 
-agcore_ble_data_cb_t g_agcore_ble_data_cb = NULL;
-
+/**
+ * @brief AGCORE BLE NOTIFY
+ */
 esp_err_t agcore_ble_notify(const uint8_t *data, uint16_t len)
 {
     if (!data || len == 0) {
@@ -51,14 +53,26 @@ esp_err_t agcore_ble_notify(const uint8_t *data, uint16_t len)
     return ESP_OK;
 }
 
-esp_err_t agcore_ble_send_data(const uint8_t *data, uint16_t len)
+/**
+ * @brief AGCORE BLE数据接收
+ */
+void agcore_ble_rx_data_handle(const uint8_t *data, uint16_t len)
 {
-    return agcore_ble_notify(data, len);
-}
+    agcore_data_st item = {
+        .link = AGCORE_DATA_LINK_BLE,
+    };
 
-void agcore_ble_register_data_callback(agcore_ble_data_cb_t cb)
-{
-    g_agcore_ble_data_cb = cb;
+    if (data == NULL) {
+        CORE_LOGD(TAG, "rx invalid|len=%u", len);
+        return;
+    }
+
+    if (agcore_data_decode(data, len, &item) == 0) {
+        CORE_LOGD(TAG, "decode failed|len=%u", len);
+        return;
+    }
+
+    agcore_data_push(&item);
 }
 
 #endif

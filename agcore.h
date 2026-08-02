@@ -3,7 +3,7 @@
 
 #define AGCORE_VERSION_MAJOR    0
 #define AGCORE_VERSION_MINOR    7
-#define AGCORE_VERSION_PATCH    0
+#define AGCORE_VERSION_PATCH    1
 
 #define AGCORE_VERSION       0x03
 

@@ -88,7 +88,7 @@ void agcore_data_handler_register(agcore_data_cb cb);
 链路层通过以下接口把数据推入 AGCORE 数据队列：
 
 ```c
-void agcore_data_push(agcore_data_link_et link, uint16_t cmd, const uint8_t *payload, uint16_t payload_len);
+void agcore_data_push(const agcore_data_st *data);
 ```
 
 ## 统一数据头
@@ -98,6 +98,7 @@ AGCORE 内部统一数据结构定义如下：
 ```c
 typedef struct {
     agcore_data_link_et link;
+    uint8_t sn;
     uint16_t cmd;
     uint16_t payload_len;
     uint8_t payload[AGCORE_DATA_CHANNEL_PAYLOAD_MAX];
@@ -107,9 +108,10 @@ typedef struct {
 字段说明：
 
 - `link`: 数据来源链路。
+- `sn`: 顶层协议序号。
 - `cmd`: 应用命令字。
-- `payload_len`: 载荷长度。
-- `payload`: 载荷数据。
+- `payload_len`: 业务载荷长度。
+- `payload`: 业务载荷数据。raw 顶层协议包只存在于 `agcore_data_encode()` / `agcore_data_decode()` 边界。
 
 这种结构让应用层不用关心数据来自 BLE、Wi-Fi 还是 UART，只需要按照统一的数据头解析命令和载荷。
 

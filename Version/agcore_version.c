@@ -2,6 +2,10 @@
 
 #include <stdio.h>
 
+/* 用尖括号 include, 强制走 include 路径搜索, 命中 CMake 生成版(generated/agcore_version.h),
+   而非同目录模板版(含 @占位符@)。 */
+#include <agcore_version.h>
+
 static agcore_device_info_st s_agcore_device_info = {
     .device_type = 0,
     .device_id = 0,
@@ -13,7 +17,6 @@ static bool s_agcore_device_info_is_set = false;
 
 static const agcore_version_info_st s_agcore_version_info = {
     .version = AGCORE_VERSION,
-    .id = AGCORE_ID,
     .git_hash = AGCORE_GIT_HASH,
     .git_branch = AGCORE_GIT_BRANCH,
     .build_time = AGCORE_BUILD_TIME,
@@ -59,12 +62,9 @@ void agcore_device_info_get_bytes(uint8_t *buf, uint16_t len)
 
     buf[0] = (uint8_t)(s_agcore_device_info.device_type >> 8);
     buf[1] = (uint8_t)(s_agcore_device_info.device_type);
-    buf[2] = (uint8_t)(s_agcore_device_info.device_id >> 8);
-    buf[3] = (uint8_t)(s_agcore_device_info.device_id);
-    buf[4] = (uint8_t)(s_agcore_device_info.fw_version >> 8);
-    buf[5] = (uint8_t)(s_agcore_device_info.fw_version);
-    buf[6] = (uint8_t)(s_agcore_device_info.hw_version >> 8);
-    buf[7] = (uint8_t)(s_agcore_device_info.hw_version);
+    agcore_put_bytes16(&buf[2], s_agcore_device_info.device_id);
+    agcore_put_bytes16(&buf[4], s_agcore_device_info.fw_version);
+    agcore_put_bytes16(&buf[6], s_agcore_device_info.hw_version);
 }
 
 /**
@@ -131,15 +131,6 @@ uint16_t agcore_version_info_get_version(void)
 }
 
 /**
- * @brief 获取 AGCORE ID
- * @return AGCORE ID
- */
-uint16_t agcore_version_info_get_id(void)
-{
-    return s_agcore_version_info.id;
-}
-
-/**
  * @brief 获取设备标识字符串
  * @return TYPE_ID_FW_HW
  */
@@ -158,7 +149,7 @@ int agcore_device_info_get_string(char *buf, size_t buf_len)
 
 /**
  * @brief 获取 AGCORE 标识字符串
- * @return VERSION_ID
+ * @return VERSION
  */
 int agcore_version_info_get_string(char *buf, size_t buf_len)
 {
@@ -166,5 +157,5 @@ int agcore_version_info_get_string(char *buf, size_t buf_len)
         return -1;
     }
 
-    return snprintf(buf, buf_len, "%04X_%04X", s_agcore_version_info.version, s_agcore_version_info.id);
+    return snprintf(buf, buf_len, "%04X", s_agcore_version_info.version);
 }

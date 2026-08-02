@@ -2,7 +2,7 @@
 #define __AGCORE_H__
 
 #define AGCORE_VERSION_MAJOR    0
-#define AGCORE_VERSION_MINOR    5
+#define AGCORE_VERSION_MINOR    6
 #define AGCORE_VERSION_PATCH    0
 
 #define AGCORE_VERSION       0x03

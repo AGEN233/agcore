@@ -2,7 +2,7 @@
 
 
 
-#include "agcore_printf_log.h"
+#include "agcore_log_adapter.h"
 
 #define TAG "AGCORE_DATAEVENT_ROUTE"
 
@@ -29,13 +29,13 @@ void agcore_data_route_handler(const agcore_data_st *data)
         return;
     }
 
-    switch (data->cmd) {
-        default: {
-            if (s_agcore_data_app_cb != NULL) {
-                s_agcore_data_app_cb(data);
-            }
-            break;
-        }
+    /* 先让 CORE 处理自己需要的命令,命中则截留,不再推给应用层 */
+    if (agcore_data_handle_core(data)) {
+        return;
     }
 
+    /* 剩余数据推送到应用层 */
+    if (s_agcore_data_app_cb != NULL) {
+        s_agcore_data_app_cb(data);
+    }
 }

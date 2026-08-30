@@ -1,0 +1,13 @@
+menu "LifeCycle"
+
+config AGCORE_LIFECYCLE_FACTORY_BOOT_COUNT
+    int "Factory reset trigger boot count"
+    default 5
+    range 2 20
+
+config AGCORE_LIFECYCLE_STABLE_CLEAR_MS
+    int "Boot stable clear time ms"
+    default 10000
+    range 1000 60000
+
+endmenu

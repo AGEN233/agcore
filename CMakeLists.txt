@@ -1,18 +1,19 @@
 set(AGCORE_SRCS
     "agcore.c"
-    "data_channel/agcore_data_encode.c"
-    "data_channel/agcore_data_queue.c"
-    "data_channel/agcore_dataevent_route.c"
-    "data_channel/agcore_datevent_handle.c"
+    "platform/espidf/agcore_port_espidf.c"
 )
 
 set(AGCORE_INCLUDE_DIRS
     "."
-    "data_channel"
+    "platform"
+    "platform/espidf"
 )
 
 set(AGCORE_REQUIRES
     esp_timer
+    nvs_flash
+    esp_partition
+    spiffs
     heap
     bt
     esp_driver_gpio
@@ -29,9 +30,12 @@ idf_component_register(
     REQUIRES ${AGCORE_REQUIRES}
 )
 
-add_subdirectory(console)
-add_subdirectory(pixel_driver)
-add_subdirectory(display_driver)
-add_subdirectory(BLE)
-add_subdirectory(Utils)
-add_subdirectory(Version)
+add_subdirectory(common/console)
+add_subdirectory(common/lifecycle)
+add_subdirectory(common/persist)
+add_subdirectory(common/utils)
+add_subdirectory(common/version)
+add_subdirectory(pipe/data)
+add_subdirectory(transport/ble)
+add_subdirectory(driver/pixel)
+add_subdirectory(driver/display)

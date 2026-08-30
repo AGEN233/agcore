@@ -1,0 +1,20 @@
+menu "AGCORE PERSIST"
+
+config AGCORE_FLASH_PARTITION_LABEL
+    string "Flash partition label"
+    default "data"
+    help
+        Partition label used by agcore_flash_* APIs.
+
+config AGCORE_FS_ENABLE
+    bool "Enable filesystem support"
+    default n
+
+config AGCORE_FS_PARTITION_LABEL
+    string "Filesystem partition label"
+    default "fs"
+    depends on AGCORE_FS_ENABLE
+    help
+        Partition label mounted by agcore_fs_* APIs.
+
+endmenu

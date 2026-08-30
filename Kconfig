@@ -1,8 +1,10 @@
 menu "AGCORE CONFIG"
 
-rsource "BLE/Kconfig"
-rsource "console/Kconfig"
-rsource "pixel_driver/Kconfig"
-rsource "display_driver/Kconfig"
+rsource "transport/ble/Kconfig"
+rsource "common/console/Kconfig"
+rsource "common/lifecycle/Kconfig"
+rsource "common/persist/Kconfig"
+rsource "driver/pixel/Kconfig"
+rsource "driver/display/Kconfig"
 
 endmenu

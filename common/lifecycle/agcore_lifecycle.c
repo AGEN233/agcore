@@ -1,4 +1,5 @@
 #include "agcore_lifecycle.h"
+#include "agcore_initcall.h"
 
 #include <stddef.h>
 #include <string.h>
@@ -170,6 +171,8 @@ esp_err_t agcore_lifecycle_init(void)
 
     return ESP_OK;
 }
+
+AGCORE_CORE_INITCALL(agcore_lifecycle_init);
 
 /**
  * @brief 标记启动稳定并清零连续启动计数

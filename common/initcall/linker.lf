@@ -1,0 +1,43 @@
+# Link-time collection of AGCORE module initialization functions.
+
+[sections:agcore_initcall_core]
+entries:
+    .agcore_initcall.core
+
+[sections:agcore_initcall_service]
+entries:
+    .agcore_initcall.service
+
+[sections:agcore_initcall_late]
+entries:
+    .agcore_initcall.late
+
+[scheme:agcore_initcall_core_default]
+entries:
+    agcore_initcall_core -> flash_rodata
+
+[scheme:agcore_initcall_service_default]
+entries:
+    agcore_initcall_service -> flash_rodata
+
+[scheme:agcore_initcall_late_default]
+entries:
+    agcore_initcall_late -> flash_rodata
+
+[mapping:agcore_initcall_core]
+archive: *
+entries:
+    * (agcore_initcall_core_default);
+        agcore_initcall_core -> flash_rodata KEEP() SORT(name) SURROUND(agcore_initcall_core)
+
+[mapping:agcore_initcall_service]
+archive: *
+entries:
+    * (agcore_initcall_service_default);
+        agcore_initcall_service -> flash_rodata KEEP() SORT(name) SURROUND(agcore_initcall_service)
+
+[mapping:agcore_initcall_late]
+archive: *
+entries:
+    * (agcore_initcall_late_default);
+        agcore_initcall_late -> flash_rodata KEEP() SORT(name) SURROUND(agcore_initcall_late)

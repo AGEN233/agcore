@@ -4,19 +4,12 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include "agcore.h"
 #include "agcore_bytes.h"
 
 #define AGCORE_GIT_HASH      "@AGCORE_GIT_HASH@"
 #define AGCORE_GIT_BRANCH    "@AGCORE_GIT_BRANCH@"
 #define AGCORE_BUILD_TIME    "@AGCORE_BUILD_TIME@"
-
-#ifndef AGCORE_VERSION
-#define AGCORE_VERSION       0x01
-#endif
-
-#ifndef AGCORE_VRESION
-#define AGCORE_VRESION       AGCORE_VERSION
-#endif
 
 typedef struct {
     uint16_t device_type;

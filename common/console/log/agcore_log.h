@@ -69,6 +69,8 @@ void agcore_log_init(void);
 /* 供薄壳 elog_port.c 转调 */
 void   agcore_log_port_output(const char *log, size_t size);
 const char *agcore_log_port_get_time(void);
+void   agcore_log_port_lock(void);
+void   agcore_log_port_unlock(void);
 
 /* 异步输出通知(elog_async.c 非 pthread 模式 extern 引用) */
 void   agcore_log_async_notice(void);

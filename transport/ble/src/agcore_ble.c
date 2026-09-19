@@ -1,4 +1,5 @@
 #include "sdkconfig.h"
+#include "agcore_initcall.h"
 
 #ifdef CONFIG_AGCORE_BLE_ENABLE
 #include <stdatomic.h>
@@ -165,3 +166,7 @@ esp_err_t agcore_ble_init(void)
         return ESP_FAIL;
     #endif
 }
+
+#ifdef CONFIG_AGCORE_BLE_ENABLE
+AGCORE_CORE_INITCALL(agcore_ble_init);
+#endif

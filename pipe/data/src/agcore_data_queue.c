@@ -1,4 +1,5 @@
 #include "agcore_data_protocol.h"
+#include "agcore_initcall.h"
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/queue.h"
@@ -78,21 +79,22 @@ static void agcore_data_send_task(void *arg)
 /**
  * @brief 统一收发队列初始化
  */
-void agcore_data_queue_init(void)
+int agcore_data_queue_init(void)
 {
     if (g_agcore_data_queue == NULL) {
         g_agcore_data_queue = xQueueCreate(AGCORE_DATA_QUEUE_LENGTH, sizeof(agcore_data_t));
         if (g_agcore_data_queue == NULL) {
             CORE_LOGE(TAG, "data queue create failed");
-            return;
+            return ESP_ERR_NO_MEM;
         }
     }
 
     if (g_agcore_data_task == NULL) {
-        xTaskCreate(agcore_data_task, "AGCORE_DATA_QUEUE_TASK", (4 * 1024), NULL, 5, &g_agcore_data_task);
-        if (g_agcore_data_task == NULL) {
+        if (xTaskCreate(agcore_data_task, "AGCORE_DATA_QUEUE_TASK", (4 * 1024), NULL, 5,
+                        &g_agcore_data_task) != pdPASS) {
+            g_agcore_data_task = NULL;
             CORE_LOGE(TAG, "data queue task create failed");
-            return;
+            return ESP_ERR_NO_MEM;
         }
     }
 
@@ -100,18 +102,23 @@ void agcore_data_queue_init(void)
         g_agcore_send_queue = xQueueCreate(AGCORE_DATA_QUEUE_LENGTH, sizeof(agcore_data_t));
         if (g_agcore_send_queue == NULL) {
             CORE_LOGE(TAG, "send queue create failed");
-            return;
+            return ESP_ERR_NO_MEM;
         }
     }
 
     if (g_agcore_send_task == NULL) {
-        xTaskCreate(agcore_data_send_task, "AGCORE_DATA_SEND_TASK", (4 * 1024), NULL, 5, &g_agcore_send_task);
-        if (g_agcore_send_task == NULL) {
+        if (xTaskCreate(agcore_data_send_task, "AGCORE_DATA_SEND_TASK", (4 * 1024), NULL, 5,
+                        &g_agcore_send_task) != pdPASS) {
+            g_agcore_send_task = NULL;
             CORE_LOGE(TAG, "send queue task create failed");
-            return;
+            return ESP_ERR_NO_MEM;
         }
     }
+
+    return ESP_OK;
 }
+
+AGCORE_SERVICE_INITCALL(agcore_data_queue_init);
 
 /**
  * @brief 推送数据到统一接收队列

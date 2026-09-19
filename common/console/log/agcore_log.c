@@ -1,27 +1,29 @@
 #include "agcore_log.h"
-#include "agcore_console.h"
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/semphr.h"
 #include <time.h>
+#include <stdio.h>
 
 #define AGCORE_LOG_TASK_STACK   (2048)
 #define AGCORE_LOG_TASK_PRIO    (5)
 
 static SemaphoreHandle_t g_log_notify;         /* 异步输出通知(二值信号量) */
 static StaticSemaphore_t g_log_notify_buf;
+static SemaphoreHandle_t g_log_output_lock;    /* Log backend 串口写锁 */
+static StaticSemaphore_t g_log_output_lock_buf;
 
 static void agcore_log_output_task(void *arg);
 
 /**
- * @brief EasyLogger 最终输出(整行文本交给 console 写口, 由 console 内部持锁)
+ * @brief EasyLogger 最终输出。Log backend 不依赖 Console/Shell。
  * @param log 整行日志内容指针
  * @param size 整行日志字节数
  */
 void agcore_log_port_output(const char *log, size_t size)
 {
-    agcore_console_write(log, size);
+    printf("%.*s", (int)size, log);
 }
 
 /**
@@ -44,7 +46,9 @@ static void agcore_log_output_task(void *arg)
     while (1) {
         xSemaphoreTake(g_log_notify, portMAX_DELAY);
         while ((size = elog_async_get_line_log(buf, sizeof(buf))) > 0) {
-            agcore_console_write(buf, size);
+            agcore_log_port_lock();
+            agcore_log_port_output(buf, size);
+            agcore_log_port_unlock();
         }
     }
 }
@@ -72,7 +76,8 @@ void agcore_log_init(void)
     const size_t log_fmt = ELOG_FMT_LVL | ELOG_FMT_TAG;
 
     g_log_notify = xSemaphoreCreateBinaryStatic(&g_log_notify_buf);
-    if (!g_log_notify) {
+    g_log_output_lock = xSemaphoreCreateMutexStatic(&g_log_output_lock_buf);
+    if (!g_log_notify || !g_log_output_lock) {
         return;
     }
 
@@ -87,4 +92,14 @@ void agcore_log_init(void)
 
         xTaskCreate(agcore_log_output_task, "elog_out", AGCORE_LOG_TASK_STACK, NULL, AGCORE_LOG_TASK_PRIO, NULL);
     }
+}
+
+void agcore_log_port_lock(void)
+{
+    xSemaphoreTake(g_log_output_lock, portMAX_DELAY);
+}
+
+void agcore_log_port_unlock(void)
+{
+    xSemaphoreGive(g_log_output_lock);
 }

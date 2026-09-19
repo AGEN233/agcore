@@ -31,7 +31,6 @@
 
 #include <elog.h>
 
-#include "agcore_console.h"
 #include "agcore_log.h"
 
 /**
@@ -67,18 +66,17 @@ void elog_port_output(const char *log, size_t size) {
 
 /**
  * output lock
- * @note 锁集中于 agcore_console_write 内部统一持共享锁, 此处不重复加锁,
- *       以避免同一把非递归 mutex 在(外层 elog 锁 + write 内层锁)下重入死锁。
+ * @note 锁属于 Log backend，因此可在 Console/Shell 前使用。
  */
 void elog_port_output_lock(void) {
-    /* add your code here */
+    agcore_log_port_lock();
 }
 
 /**
  * output unlock
  */
 void elog_port_output_unlock(void) {
-    /* add your code here */
+    agcore_log_port_unlock();
 }
 
 /**

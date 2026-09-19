@@ -1,24 +1,29 @@
-#ifndef __AGCORE_H__
-#define __AGCORE_H__
+/**
+ * @file agcore.h
+ * @brief AGCORE 最底层公共基础头文件
+ * @note 仅包含所有模块依赖的基础设施；模块接口由使用方按需包含。
+ */
+#ifndef AGCORE_H
+#define AGCORE_H
+
 
 #define AGCORE_VERSION_MAJOR    0
-#define AGCORE_VERSION_MINOR    7
-#define AGCORE_VERSION_PATCH    2
+#define AGCORE_VERSION_MINOR    8
+#define AGCORE_VERSION_PATCH    0
 
-#define AGCORE_VERSION       0x03
+#define AGCORE_VERSION 0x03
 
-#include "agcore_public.h"
-#include "agcore_data.h"
-#include "agcore_version.h"
-#include "agcore_log.h"
-#include "agcore_lifecycle.h"
-#include "agcore_nvs.h"
-#include "agcore_flash.h"
-#include "agcore_fs.h"
-#include "agcore_ble.h"
-#include "pixel_driver.h"
-#include "display_driver.h"
+/* ESP-IDF 配置 */
+#include "sdkconfig.h"
 
-void agcore_init(void);
+/* 基础类型 */
+#include "stdint.h"
+#include "stdbool.h"
+#include "stdio.h"
+#include "string.h"
+#include "inttypes.h"
+
+/* 平台适配层（内存、时间、日志宏） */
+#include "agcore_port.h"
 
 #endif /* AGCORE_H */

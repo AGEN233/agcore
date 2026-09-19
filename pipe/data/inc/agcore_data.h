@@ -30,7 +30,7 @@ typedef void (*agcore_data_cb)(const agcore_data_t *data);
 /* 链路发送回调:接收已封好的顶层协议帧,由各链路实现 */
 typedef esp_err_t (*agcore_data_send_cb)(const uint8_t *buf, uint16_t len);
 
-void agcore_data_queue_init(void);
+int agcore_data_queue_init(void);
 void agcore_data_push(const agcore_data_t *data);
 void agcore_data_link_reset(agcore_link link);
 void agcore_data_handler_register(agcore_data_cb cb);

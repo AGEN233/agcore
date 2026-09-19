@@ -4,7 +4,7 @@
 #define AGCORE_PLATFORM_IS_ESPIDF
 
 #if defined(AGCORE_PLATFORM_IS_ESPIDF)
-#include "espidf/agcore_port_espidf.h"
+#include "agcore_port_espidf.h"
 #else
 #error "Unsupported AGCORE platform"
 #endif

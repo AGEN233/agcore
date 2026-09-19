@@ -4,7 +4,7 @@ set(AGCORE_SRCS
 
 set(AGCORE_INCLUDE_DIRS
     "."
-    "platform"
+    "platform/inc"
     "platform/espidf"
 )
 

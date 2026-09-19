@@ -8,7 +8,7 @@ target_sources(${COMPONENT_LIB} PRIVATE
 )
 
 target_include_directories(${COMPONENT_LIB} PUBLIC
-    "log"
+    "log/inc"
     "log/vendor/easylogger/inc"
     "shell/inc"
 )

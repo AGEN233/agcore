@@ -5,7 +5,7 @@ target_sources(${COMPONENT_LIB} PRIVATE
 )
 
 target_include_directories(${COMPONENT_LIB} PUBLIC
-    "."
+    "inc"
     "panel/st7735"
     "panel/st7789"
 )

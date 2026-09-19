@@ -8,10 +8,6 @@
 
 static bool g_agcore_fs_mounted = false;
 
-/**
- * @brief 挂载文件系统
- * @return ESP_OK 成功, 否则错误码; 未使能时返回 ESP_ERR_NOT_SUPPORTED
- */
 esp_err_t agcore_fs_mount(void)
 {
 #ifdef CONFIG_AGCORE_FS_ENABLE
@@ -36,10 +32,6 @@ esp_err_t agcore_fs_mount(void)
 #endif
 }
 
-/**
- * @brief 卸载文件系统
- * @return ESP_OK 成功, 否则错误码; 未使能时返回 ESP_ERR_NOT_SUPPORTED
- */
 esp_err_t agcore_fs_unmount(void)
 {
 #ifdef CONFIG_AGCORE_FS_ENABLE
@@ -57,10 +49,6 @@ esp_err_t agcore_fs_unmount(void)
 #endif
 }
 
-/**
- * @brief 查询文件系统是否已挂载
- * @return 已挂载返回 true
- */
 bool agcore_fs_is_mounted(void)
 {
     return g_agcore_fs_mounted;

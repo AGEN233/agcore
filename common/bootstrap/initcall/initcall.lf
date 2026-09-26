@@ -28,16 +28,16 @@ entries:
 archive: *
 entries:
     * (agcore_initcall_core_default);
-        agcore_initcall_core -> flash_rodata KEEP() SORT(name) SURROUND(agcore_initcall_core)
+        agcore_initcall_core -> flash_rodata KEEP() SORT(name) SURROUND(_ag_i0)
 
 [mapping:agcore_initcall_service]
 archive: *
 entries:
     * (agcore_initcall_service_default);
-        agcore_initcall_service -> flash_rodata KEEP() SORT(name) SURROUND(agcore_initcall_service)
+        agcore_initcall_service -> flash_rodata KEEP() SORT(name) SURROUND(_ag_i1)
 
 [mapping:agcore_initcall_late]
 archive: *
 entries:
     * (agcore_initcall_late_default);
-        agcore_initcall_late -> flash_rodata KEEP() SORT(name) SURROUND(agcore_initcall_late)
+        agcore_initcall_late -> flash_rodata KEEP() SORT(name) SURROUND(_ag_i2)

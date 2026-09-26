@@ -1,5 +1,5 @@
 #include "agcore_data_protocol.h"
-#include "agcore_initcall.h"
+#include "initcall.h"
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/queue.h"

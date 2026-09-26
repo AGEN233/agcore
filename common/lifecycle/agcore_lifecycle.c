@@ -1,5 +1,5 @@
 #include "agcore_lifecycle.h"
-#include "agcore_initcall.h"
+#include "initcall.h"
 
 #include <stddef.h>
 #include <string.h>
@@ -54,7 +54,7 @@ static uint16_t agcore_lifecycle_crc16(const agcore_lifecycle_data_t *data)
     const uint8_t *bytes = (const uint8_t *)data;
     size_t len = offsetof(agcore_lifecycle_data_t, crc16);
 
-    return agcore_crc16_calc(bytes, (uint16_t)len);
+    return agcore_crc16_calc(0xFFFFU, bytes, (uint16_t)len);
 }
 
 /**

@@ -1,5 +1,5 @@
 #include "sdkconfig.h"
-#include "agcore_initcall.h"
+#include "initcall.h"
 
 #ifdef CONFIG_AGCORE_BLE_ENABLE
 #include <stdatomic.h>

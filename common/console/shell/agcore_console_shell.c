@@ -1,5 +1,5 @@
 #include "agcore_console_shell.h"
-#include "agcore_initcall.h"
+#include "initcall.h"
 
 /**
  * @brief 初始化 console shell。

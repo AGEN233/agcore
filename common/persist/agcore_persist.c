@@ -1,5 +1,5 @@
 #include "agcore_persist.h"
-#include "agcore_initcall.h"
+#include "initcall.h"
 
 /**
  * @brief 持久化模块初始化(当前无额外初始化工作)

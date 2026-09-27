@@ -1,7 +1,7 @@
 #ifndef __AGCORE_CHECK_H__
 #define __AGCORE_CHECK_H__
 
-#include "stdint.h"
+#include "agcore_port.h"
 
 /**
  * @brief checksum

@@ -1,4 +1,5 @@
 #include "agcore_console_shell.h"
+#include "agcore_console_log.h"
 #include "letter_shell/shell.h"
 #include "initcall.h"
 
@@ -55,18 +56,4 @@ int agcore_console_shell_init(void)
     return 0;
 }
 
-static int shell_test(int argc, char **argv)
-{
-    CORE_LOGI("SHELL", "hello");
-    return 0;
-}
-
-SHELL_EXPORT_CMD(
-    SHELL_CMD_PERMISSION(0) |
-    SHELL_CMD_TYPE(SHELL_TYPE_CMD_MAIN) |
-    SHELL_CMD_DISABLE_RETURN,
-    test,
-    shell_test,
-    shell test
-);
 AGCORE_SERVICE_INITCALL(agcore_console_shell_init);

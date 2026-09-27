@@ -1,11 +1,7 @@
 #ifndef __AGCORE_VERSION_H__
 #define __AGCORE_VERSION_H__
 
-#include <stddef.h>
-#include <stdbool.h>
-#include <stdint.h>
-#include "agcore.h"
-#include "agcore_bytes.h"
+#include "agcore_port.h"
 
 #define AGCORE_GIT_HASH      "@AGCORE_GIT_HASH@"
 #define AGCORE_GIT_BRANCH    "@AGCORE_GIT_BRANCH@"

@@ -3,6 +3,8 @@
 /* 用尖括号 include, 强制走 include 路径搜索, 命中 CMake 生成版(generated/agcore_version.h),
    而非同目录模板版(含 @占位符@)。 */
 #include <agcore_version.h>
+#include "agcore.h"
+#include "agcore_bytes.h"
 
 static agcore_device_info_t g_agcore_device_info = {
     .device_type = 0,

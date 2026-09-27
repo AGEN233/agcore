@@ -1,9 +1,7 @@
 #ifndef __AGCORE_LIFECYCLE_H__
 #define __AGCORE_LIFECYCLE_H__
 
-#include <stdbool.h>
-#include <stdint.h>
-
+#include "agcore_port.h"
 #include "esp_err.h"
 
 typedef enum {

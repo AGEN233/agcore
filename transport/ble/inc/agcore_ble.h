@@ -1,6 +1,5 @@
 #ifndef __AGCORE_BLE_H__
 #define __AGCORE_BLE_H__
-#include <stdbool.h>
 #include "esp_err.h"
 #include "agcore_data.h"
 

@@ -1,9 +1,7 @@
 #ifndef __DISPLAY_DRIVER_H__
 #define __DISPLAY_DRIVER_H__
 
-#include "sdkconfig.h"
-#include "stdbool.h"
-#include "stdint.h"
+#include "agcore_port.h"
 #include "esp_err.h"
 
 #if defined(CONFIG_DISPLAY_DRIVER_ENABLE) && defined(CONFIG_DISPLAY_IC_ST7735)

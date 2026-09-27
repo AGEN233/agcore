@@ -4,6 +4,7 @@
 #define AGCORE_PLATFORM_IS_ESPIDF
 
 /* C标准库 */
+#include "stddef.h"
 #include "stdint.h"
 #include "stdbool.h"
 #include "stdio.h"

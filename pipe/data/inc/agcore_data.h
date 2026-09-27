@@ -1,8 +1,7 @@
 #ifndef __AGCORE_DATA_H__
 #define __AGCORE_DATA_H__
 
-#include "stdint.h"
-#include "stdbool.h"
+#include "agcore_port.h"
 #include "esp_err.h"
 
 #ifndef AGCORE_DATA_PAYLOAD_MAX

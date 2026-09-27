@@ -1,9 +1,8 @@
 #ifndef __AGCORE_CONSOLE_LOG_H__
 #define __AGCORE_CONSOLE_LOG_H__
 
-#include "stddef.h"
-#include <elog.h>
 #include "agcore_port.h"
+#include <elog.h>
 
 #ifdef __cplusplus
 extern "C" {

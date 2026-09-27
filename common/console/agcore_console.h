@@ -1,7 +1,7 @@
 #ifndef __AGCORE_CONSOLE_H__
 #define __AGCORE_CONSOLE_H__
 
-#include "agcore.h"
+#include "agcore_port.h"
 
 void agcore_console_output_lock(void);
 void agcore_console_output_unlock(void);

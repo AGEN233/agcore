@@ -1,8 +1,7 @@
 #ifndef __AGCORE_FLASH_H__
 #define __AGCORE_FLASH_H__
 
-#include <stddef.h>
-
+#include "agcore_port.h"
 #include "esp_err.h"
 
 esp_err_t agcore_flash_read(size_t offset, void *buf, size_t len);

@@ -1,8 +1,7 @@
 #ifndef __AGCORE_FS_H__
 #define __AGCORE_FS_H__
 
-#include <stdbool.h>
-
+#include "agcore_port.h"
 #include "esp_err.h"
 
 #define AGCORE_FS_BASE_PATH "/fs"

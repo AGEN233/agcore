@@ -4,9 +4,15 @@
 #include "agcore_ble.h"
 #include "agcore_ble_gatt.h"
 #include "agcore_ble_pipe.h"
+#include "agcore_data.h"
 #include "agcore_console_log.h"
+#include "host/ble_att.h"
+#include "os/os_mbuf.h"
 #include "services/gatt/ble_svc_gatt.h"
 #define TAG "BLE_GATT"
+
+/* AGCORE frame: 8-byte header, 2-byte command, 1-byte checksum. */
+#define AGCORE_BLE_FRAME_MAX_LEN (AGCORE_DATA_PAYLOAD_MAX + 11)
 
 // CONTROL -> C -> 0x43
 static const ble_uuid16_t g_agcore_ble_svc_control          = BLE_UUID16_INIT(0x4300);
@@ -45,8 +51,18 @@ static int agcore_ble_gatt_dummy_cb(uint16_t conn_handle, uint16_t attr_handle, 
  */
 static int agcore_ble_gatt_write_cb(uint16_t conn_handle, uint16_t attr_handle, struct ble_gatt_access_ctxt *ctxt, void *arg)
 {
-    uint8_t *data = ctxt->om->om_data;
-    uint16_t len = ctxt->om->om_len;
+    uint8_t data[AGCORE_BLE_FRAME_MAX_LEN];
+    uint16_t len = os_mbuf_len(ctxt->om);
+
+    if (len > sizeof(data)) {
+        CORE_LOGW(TAG, "write too long|conn=%u attr=%u len=%u", conn_handle, attr_handle, len);
+        return BLE_ATT_ERR_INVALID_ATTR_VALUE_LEN;
+    }
+
+    if (os_mbuf_copydata(ctxt->om, 0, len, data) != 0) {
+        CORE_LOGE(TAG, "write mbuf copy failed|conn=%u attr=%u len=%u", conn_handle, attr_handle, len);
+        return BLE_ATT_ERR_UNLIKELY;
+    }
 
     CORE_LOGD(TAG, "write|conn=%u attr=%u len=%u", conn_handle, attr_handle, len);
     agcore_ble_rx_data_handle(data, len);

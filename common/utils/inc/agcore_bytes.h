@@ -1,7 +1,7 @@
 #ifndef __AGCORE_BYTES_H__
 #define __AGCORE_BYTES_H__
 
-#include "stdint.h"
+#include "agcore_port.h"
 
 /**
  * @brief 字节流工具:32/16 位数值与大端字节流互转

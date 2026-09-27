@@ -10,7 +10,7 @@
 #include "agcore_ble_gap.h"
 #include "agcore_ble_gatt.h"
 #include "agcore_version.h"
-#include "agcore_log.h"
+#include "agcore_console_log.h"
 #include "esp_bt.h"
 #include "host/ble_hs.h"
 

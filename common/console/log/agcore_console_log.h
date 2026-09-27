@@ -1,5 +1,5 @@
-#ifndef __AGCORE_LOG_ADAPTER_H__
-#define __AGCORE_LOG_ADAPTER_H__
+#ifndef __AGCORE_CONSOLE_LOG_H__
+#define __AGCORE_CONSOLE_LOG_H__
 
 #include "stddef.h"
 #include <elog.h>
@@ -67,12 +67,10 @@ extern "C" {
 void agcore_log_init(void);
 void agcore_log_port_output(const char *log, size_t size);
 const char *agcore_log_port_get_time(void);
-void agcore_log_port_lock(void);
-void agcore_log_port_unlock(void);
 void agcore_log_async_notice(void);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* __AGCORE_LOG_ADAPTER_H__ */
+#endif /* __AGCORE_CONSOLE_LOG_H__ */

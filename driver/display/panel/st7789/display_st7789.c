@@ -4,7 +4,7 @@
 
 #include "display_st7789.h"
 
-#include "agcore_log.h"
+#include "agcore_console_log.h"
 #include "driver/gpio.h"
 #include "driver/spi_master.h"
 #include "esp_heap_caps.h"

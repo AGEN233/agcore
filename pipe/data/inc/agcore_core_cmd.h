@@ -4,7 +4,7 @@
 #include "agcore_data.h"
 #include "agcore_version.h"
 #include "agcore_bytes.h"
-#include "agcore_log.h"
+#include "agcore_console_log.h"
 #include <inttypes.h>
 
 /* CORE 公共命令号 */

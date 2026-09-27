@@ -4,7 +4,7 @@
 #include "agcore_ble.h"
 #include "agcore_ble_gatt.h"
 #include "agcore_ble_pipe.h"
-#include "agcore_log.h"
+#include "agcore_console_log.h"
 #include "services/gatt/ble_svc_gatt.h"
 #define TAG "BLE_GATT"
 

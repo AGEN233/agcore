@@ -7,7 +7,7 @@
 #include "sdkconfig.h"
 
 #include "agcore_check.h"
-#include "agcore_log.h"
+#include "agcore_console_log.h"
 #include "agcore_nvs.h"
 #include "esp_system.h"
 #include "freertos/FreeRTOS.h"

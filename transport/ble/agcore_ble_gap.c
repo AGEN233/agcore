@@ -5,7 +5,7 @@
 #include "agcore_ble_adv.h"
 #include "agcore_ble_gap.h"
 #include "agcore_data.h"
-#include "agcore_log.h"
+#include "agcore_console_log.h"
 #include "nimble/nimble_port.h"
 #include "os/os_cputime.h"
 #include "services/gap/ble_svc_gap.h"
@@ -46,8 +46,7 @@ static void agcore_ble_gap_connect_handle(struct ble_gap_event *event)
 
         struct ble_gap_conn_desc conn_desc;
         if (ble_gap_conn_find(g_agcore_ble_conn_handle, &conn_desc) == 0) {
-            const uint8_t *addr = conn_desc.peer_id_addr.val;
-            CORE_LOGD(TAG, "peer address: %02X:%02X:%02X:%02X:%02X:%02X", addr[5], addr[4], addr[3], addr[2], addr[1], addr[0]);
+            CORE_LOGD(TAG, "peer address: %02X:%02X:%02X:%02X:%02X:%02X"conn_desc.peer_id_addr.val[5], conn_desc.peer_id_addr.val[4], conn_desc.peer_id_addr.val[3], conn_desc.peer_id_addr.val[2], conn_desc.peer_id_addr.val[1], conn_desc.peer_id_addr.val[0]);
         } else {
             CORE_LOGD(TAG, "peer address unavailable");
         }

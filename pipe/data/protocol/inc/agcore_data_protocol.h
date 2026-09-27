@@ -4,7 +4,7 @@
 #include "agcore_data.h"
 #include "agcore_check.h"
 #include "agcore_bytes.h"
-#include "agcore_log.h"
+#include "agcore_console_log.h"
 
 /**
  * @brief 封装AGCORE顶层协议帧

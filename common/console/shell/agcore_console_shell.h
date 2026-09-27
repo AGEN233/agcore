@@ -1,9 +1,7 @@
 #ifndef __AGCORE_CONSOLE_SHELL_H__
 #define __AGCORE_CONSOLE_SHELL_H__
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include "agcore_console.h"
 
 /**
  * @brief 初始化 console shell。
@@ -12,8 +10,5 @@ extern "C" {
  */
 int agcore_console_shell_init(void);
 
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* __AGCORE_CONSOLE_SHELL_H__ */

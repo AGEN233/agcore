@@ -9,21 +9,10 @@
 
 #define AGCORE_VERSION_MAJOR    0
 #define AGCORE_VERSION_MINOR    9
-#define AGCORE_VERSION_PATCH    2
+#define AGCORE_VERSION_PATCH    3
 
 #define AGCORE_VERSION 0x03
 
-/* ESP-IDF 配置 */
-#include "sdkconfig.h"
-
-/* 基础类型 */
-#include "stdint.h"
-#include "stdbool.h"
-#include "stdio.h"
-#include "string.h"
-#include "inttypes.h"
-
-/* 平台适配层（内存、时间、日志宏） */
 #include "agcore_port.h"
 
 #endif /* AGCORE_H */

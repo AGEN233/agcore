@@ -1,105 +1,73 @@
-#include "agcore_log.h"
+#include "agcore_console.h"
 
 #include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
 #include "freertos/semphr.h"
-#include <time.h>
-#include <stdio.h>
+#include "esp_rom_sys.h"
+#include <errno.h>
+#include <stdbool.h>
+#include <unistd.h>
 
-#define AGCORE_LOG_TASK_STACK   (2048)
-#define AGCORE_LOG_TASK_PRIO    (5)
-
-static SemaphoreHandle_t g_log_notify;         /* 异步输出通知(二值信号量) */
-static StaticSemaphore_t g_log_notify_buf;
-static SemaphoreHandle_t g_log_output_lock;    /* Log backend 串口写锁 */
-static StaticSemaphore_t g_log_output_lock_buf;
-
-static void agcore_log_output_task(void *arg);
+static SemaphoreHandle_t g_console_output_lock;
+static StaticSemaphore_t g_console_output_lock_buf;
 
 /**
- * @brief EasyLogger 最终输出。Log backend 不依赖 Console/Shell。
- * @param log 整行日志内容指针
- * @param size 整行日志字节数
+ * @brief 获取 Console 公共输出锁
  */
-void agcore_log_port_output(const char *log, size_t size)
+void agcore_console_output_lock(void)
 {
-    printf("%.*s", (int)size, log);
+    xSemaphoreTake(g_console_output_lock, portMAX_DELAY);
 }
 
 /**
- * @brief 异步输出通知
+ * @brief 释放 Console 公共输出锁
  */
-void agcore_log_async_notice(void)
+void agcore_console_output_unlock(void)
 {
-    xSemaphoreGive(g_log_notify);
+    xSemaphoreGive(g_console_output_lock);
 }
 
 /**
- * @brief 异步输出 task(log 专属): 等通知 → 逐行取缓冲 → 写 console
+ * @brief console输出
+ * @param data
+ * @param size
  */
-static void agcore_log_output_task(void *arg)
+void agcore_console_output(const char *data, size_t size)
 {
-    static char buf[ELOG_LINE_BUF_SIZE - 4];
-    size_t size;
-    (void)arg;
+    int fd = fileno(stdout);
+    size_t offset = 0;
 
-    while (1) {
-        xSemaphoreTake(g_log_notify, portMAX_DELAY);
-        while ((size = elog_async_get_line_log(buf, sizeof(buf))) > 0) {
-            agcore_log_port_lock();
-            agcore_log_port_output(buf, size);
-            agcore_log_port_unlock();
-        }
-    }
-}
-
-/**
- * @brief 获取当前时间字符串(含时分秒)
- * @return 静态缓冲的时间字符串
- */
-const char *agcore_log_port_get_time(void)
-{
-    static char tbuf[24];
-    time_t t = time(NULL);
-    struct tm tm;
-    localtime_r(&t, &tm);
-    strftime(tbuf, sizeof(tbuf), "%H:%M:%S", &tm);
-    return tbuf;
-}
-
-/**
- * @brief agcore log初始化
- * @note  日志必须初始化, 失败不跳过
- */
-void agcore_log_init(void)
-{
-    const size_t log_fmt = ELOG_FMT_LVL | ELOG_FMT_TAG;
-
-    g_log_notify = xSemaphoreCreateBinaryStatic(&g_log_notify_buf);
-    g_log_output_lock = xSemaphoreCreateMutexStatic(&g_log_output_lock_buf);
-    if (!g_log_notify || !g_log_output_lock) {
+    if (fd < 0) {
         return;
     }
 
-    if (elog_init() == ELOG_NO_ERR) {
-        elog_set_fmt(ELOG_LVL_ASSERT,  log_fmt);
-        elog_set_fmt(ELOG_LVL_ERROR,   log_fmt);
-        elog_set_fmt(ELOG_LVL_WARN,    log_fmt);
-        elog_set_fmt(ELOG_LVL_INFO,    log_fmt);
-        elog_set_fmt(ELOG_LVL_DEBUG,   log_fmt);
-        elog_set_fmt(ELOG_LVL_VERBOSE, log_fmt);
-        elog_start();
+    while (offset < size) {
+        ssize_t written = write(fd, data + offset, size - offset);
+        if (written <= 0) {
+            return;
+        }
+        offset += (size_t)written;
+    }
 
-        xTaskCreate(agcore_log_output_task, "elog_out", AGCORE_LOG_TASK_STACK, NULL, AGCORE_LOG_TASK_PRIO, NULL);
+}
+
+/**
+ * @brief 刷新 Console backend 的待发送数据。
+ */
+void agcore_console_flush(void)
+{
+    const int fd = fileno(stdout);
+
+    if (fd >= 0) {
+        (void)fsync(fd);
     }
 }
 
-void agcore_log_port_lock(void)
+/**
+ * @brief 初始化 Console 公共输出资源。
+ * @return 初始化成功返回 true，否则返回 false
+ */
+bool agcore_console_output_init(void)
 {
-    xSemaphoreTake(g_log_output_lock, portMAX_DELAY);
-}
-
-void agcore_log_port_unlock(void)
-{
-    xSemaphoreGive(g_log_output_lock);
+    g_console_output_lock = xSemaphoreCreateMutexStatic(&g_console_output_lock_buf);
+    return g_console_output_lock != NULL;
 }

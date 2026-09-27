@@ -9,7 +9,7 @@
 #include "agcore_ble_gap.h"
 #include "agcore_ble_gatt.h"
 #include "agcore_ble_pipe.h"
-#include "agcore_log.h"
+#include "agcore_console_log.h"
 #include "nimble/nimble_port.h"
 #include "nimble/nimble_port_freertos.h"
 #include "host/ble_hs.h"

@@ -1,0 +1,13 @@
+[sections:shell_command]
+entries:
+    shellCommand
+
+[scheme:shell_command_default]
+entries:
+    shell_command -> flash_rodata
+
+[mapping:shell_command]
+archive: *
+entries:
+    * (shell_command_default);
+        shell_command -> flash_rodata KEEP() SORT(name) SURROUND(shell_command)

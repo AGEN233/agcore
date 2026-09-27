@@ -7,7 +7,7 @@
 #include "agcore_ble_gatt.h"
 #include "agcore_ble_pipe.h"
 #include "agcore_data_protocol.h"
-#include "agcore_log.h"
+#include "agcore_console_log.h"
 
 #define TAG "BLE_DATA"
 

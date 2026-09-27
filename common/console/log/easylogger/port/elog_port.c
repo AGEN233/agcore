@@ -31,7 +31,8 @@
 
 #include <elog.h>
 
-#include "agcore_log.h"
+#include "agcore_console.h"
+#include "agcore_console_log.h"
 
 /**
  * EasyLogger port initialize
@@ -66,17 +67,17 @@ void elog_port_output(const char *log, size_t size) {
 
 /**
  * output lock
- * @note 锁属于 Log backend，因此可在 Console/Shell 前使用。
+ * @note 输出锁属于 Console 公共资源，由 Log 和 Shell 共同使用。
  */
 void elog_port_output_lock(void) {
-    agcore_log_port_lock();
+    agcore_console_output_lock();
 }
 
 /**
  * output unlock
  */
 void elog_port_output_unlock(void) {
-    agcore_log_port_unlock();
+    agcore_console_output_unlock();
 }
 
 /**

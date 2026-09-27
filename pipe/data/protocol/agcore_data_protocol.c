@@ -195,8 +195,6 @@ uint16_t agcore_data_decode(const uint8_t *buf, uint16_t buf_len, agcore_data_t 
 
     sn = buf[header_pos + 5];
     if (sn != 0 && state->rx_sn_valid && state->rx_last_sn == sn) {
-        uint16_t cmd = agcore_get_bytes16(&buf[header_pos + 8]);
-        CORE_LOGD(TAG, "decode duplicate sn|link=%d sn=%02X cmd=%04X payload=%u packet=%u", data->link, sn, cmd, app_payload_len, packet_len);
         return 0;
     }
 

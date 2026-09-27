@@ -1,8 +1,12 @@
 #ifndef __AGCORE_PORT_ESPIDF_H__
 #define __AGCORE_PORT_ESPIDF_H__
 
-#include <stdint.h>
+/* FREERTOS */
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
 
+/* ESPIDF 相关*/
+#include "sdkconfig.h"
 #include "esp_heap_caps.h"
 #include "esp_timer.h"
 

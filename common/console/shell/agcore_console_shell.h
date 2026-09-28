@@ -3,11 +3,8 @@
 
 #include "agcore_console.h"
 
-/**
- * @brief 初始化 console shell。
- *
- * shell 与 console/log 初始化分离，以便调用方按需决定是否启动 shell。
- */
+bool agcore_console_shell_is_ready(void);
+void agcore_console_shell_write_external(const char *data, size_t size);
 int agcore_console_shell_init(void);
 
 

@@ -1,5 +1,6 @@
 #include "agcore_console_log.h"
 #include "agcore_console.h"
+#include "agcore_console_shell.h"
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -22,9 +23,15 @@ static void agcore_log_output_task(void *arg);
  */
 void agcore_log_port_output(const char *log, size_t size)
 {
-    agcore_console_output(log, size);
+    if (agcore_console_shell_is_ready()) {
+        agcore_console_shell_write_external(log, size);
+    } else {
+        agcore_console_output_lock();
+        agcore_console_output(log, size);
+        agcore_console_output_unlock();
+    }
 }
-  
+
 /**
  * @brief 异步输出通知。
  */
@@ -45,9 +52,7 @@ static void agcore_log_output_task(void *arg)
     while (1) {
         xSemaphoreTake(g_log_notify, portMAX_DELAY);
         while ((size = elog_async_get_line_log(buf, sizeof(buf))) > 0) {
-            agcore_console_output_lock();
             agcore_log_port_output(buf, size);
-            agcore_console_output_unlock();
         }
     }
 }

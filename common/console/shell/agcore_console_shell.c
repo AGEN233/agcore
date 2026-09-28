@@ -7,6 +7,7 @@
 
 static Shell g_shell = {0};
 static char g_shell_buffer[512];
+static bool g_shell_ready = false;
 
 /**
  * @brief shell输出接口
@@ -19,6 +20,38 @@ static signed short agcore_shell_write(char *data, unsigned short len)
     return (signed short)len;
 }
 
+/**
+ * @brief shell就绪
+ * @return true
+ * @return false
+ */
+bool agcore_console_shell_is_ready(void)
+{
+    return g_shell_ready;
+}
+
+/**
+ * @brief shell外部输出接口
+ * @param data
+ * @param size
+ */
+void agcore_console_shell_write_external(const char *data, size_t size)
+{
+    if (!g_shell_ready) {
+        return;
+    }
+
+    shellWriteEndLine(&g_shell, (char *)data, size);
+
+    agcore_console_output_lock();
+    agcore_console_flush();
+    agcore_console_output_unlock();
+}
+
+/**
+ * @brief shell task
+ * @param arg
+ */
 static void agcore_shell_task(void *arg)
 {
     char ch;
@@ -27,8 +60,6 @@ static void agcore_shell_task(void *arg)
 
     while (1) {
         if (fread(&ch, 1, 1, stdin) == 1) {
-            // printf("RX: 0x%02X\r\n", (unsigned char)ch);
-            // fflush(stdout);
             shellHandler(&g_shell, ch);
             agcore_console_output_lock();
             agcore_console_flush();
@@ -51,8 +82,10 @@ int agcore_console_shell_init(void)
     agcore_console_flush();
     agcore_console_output_unlock();
 
+    g_shell_ready = true;
+
     /* 创建 Shell RX task */
-    xTaskCreate(agcore_shell_task, "shell", 4096, NULL, 2, NULL);
+    xTaskCreate(agcore_shell_task, "shell", 2048, NULL, 2, NULL);
     return 0;
 }
 

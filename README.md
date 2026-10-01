@@ -71,13 +71,13 @@ AGCORE + device_type + device_id + fw_version + hw_version
 
 ## 统一数据路由
 
-AGCORE 将不同链路的数据统一抽象为 `agcore_data_st`，应用层只需要注册一个统一的数据处理回调。
+AGCORE 将不同链路的数据统一抽象为 `agcore_data_t`。多个接收回调可以分别注册，所有回调同步收到完整的、不透明的 payload。
 
 当前支持的数据来源：
 
-- `AGCORE_DATA_LINK_BLE`
-- `AGCORE_DATA_LINK_WIFI`
-- `AGCORE_DATA_LINK_UART`
+- `LINK_BLE`
+- `LINK_WIFI`
+- `LINK_UART`
 
 应用层通过以下接口注册数据回调：
 
@@ -88,7 +88,7 @@ void agcore_data_handler_register(agcore_data_cb cb);
 链路层通过以下接口把数据推入 AGCORE 数据队列：
 
 ```c
-void agcore_data_push(const agcore_data_st *data);
+void agcore_data_push(agcore_link link, const uint8_t *raw, uint16_t raw_len);
 ```
 
 ## 统一数据头
@@ -97,23 +97,21 @@ AGCORE 内部统一数据结构定义如下：
 
 ```c
 typedef struct {
-    agcore_data_link_et link;
+    agcore_link link;
     uint8_t sn;
-    uint16_t cmd;
     uint16_t payload_len;
-    uint8_t payload[AGCORE_DATA_CHANNEL_PAYLOAD_MAX];
-} agcore_data_st;
+    uint8_t *payload;
+} agcore_data_t;
 ```
 
 字段说明：
 
 - `link`: 数据来源链路。
 - `sn`: 顶层协议序号。
-- `cmd`: 应用命令字。
-- `payload_len`: 业务载荷长度。
-- `payload`: 业务载荷数据。raw 顶层协议包只存在于 `agcore_data_encode()` / `agcore_data_decode()` 边界。
+- `payload_len`: 顶层协议 payload 的字节数。
+- `payload`: 不透明字节串。AGCORE 的队列、编解码和通用路由不解释其中的业务格式。
 
-这种结构让应用层不用关心数据来自 BLE、Wi-Fi 还是 UART，只需要按照统一的数据头解析命令和载荷。
+链路层入队前会复制原始帧；接收任务解码后同步调用所有回调，回调返回后释放帧缓冲区。需要命令的 CORE 或应用回调自行解析 payload，不能保留接收 payload 指针。发送接口同样将 payload 作为不透明字节串，并在入队前复制。
 
 ## 使用方式
 

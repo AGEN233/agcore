@@ -6,7 +6,7 @@
 #include "agcore_ble_gap.h"
 #include "agcore_ble_gatt.h"
 #include "agcore_ble_pipe.h"
-#include "agcore_data_protocol.h"
+#include "agcore_data.h"
 #include "agcore_console_log.h"
 
 #define TAG "BLE_DATA"
@@ -60,27 +60,18 @@ esp_err_t agcore_ble_notify(const uint8_t *data, uint16_t len)
 }
 
 /**
- * @brief BLE 数据接收入口: 解码后推入统一接收队列
+ * @brief BLE 数据接收入口: 复制原始帧并推入统一接收队列
  * @param data 接收数据
  * @param len 数据长度
  */
 void agcore_ble_rx_data_handle(const uint8_t *data, uint16_t len)
 {
-    agcore_data_t item = {
-        .link = LINK_BLE,
-    };
-
     if (data == NULL) {
         CORE_LOGD(TAG, "rx invalid|len=%u", len);
         return;
     }
 
-    if (agcore_data_decode(data, len, &item) == 0) {
-        CORE_LOGD(TAG, "decode failed|len=%u", len);
-        return;
-    }
-
-    agcore_data_push(&item);
+    agcore_data_push(LINK_BLE, data, len);
 }
 
 #endif

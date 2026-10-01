@@ -55,10 +55,21 @@ void agcore_console_shell_write_external(const char *data, size_t size)
 static void agcore_shell_task(void *arg)
 {
     char ch;
+    TickType_t last_stack_report = 0;
 
     (void)arg;
 
     while (1) {
+        TickType_t now = xTaskGetTickCount();
+        if (last_stack_report == 0 || now - last_stack_report >= pdMS_TO_TICKS(5000)) {
+            UBaseType_t high_water_words = uxTaskGetStackHighWaterMark(NULL);
+            CORE_LOGI(TAG, "shell stack: reserved=%uB minimum_free=%uB (%u words)",
+                      (unsigned)2048,
+                      (unsigned)(high_water_words * sizeof(StackType_t)),
+                      (unsigned)high_water_words);
+            last_stack_report = now;
+        }
+
         if (fread(&ch, 1, 1, stdin) == 1) {
             shellHandler(&g_shell, ch);
             agcore_console_output_lock();

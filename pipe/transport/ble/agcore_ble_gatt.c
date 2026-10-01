@@ -11,8 +11,8 @@
 #include "services/gatt/ble_svc_gatt.h"
 #define TAG "BLE_GATT"
 
-/* AGCORE frame: 8-byte header, 2-byte command, 1-byte checksum. */
-#define AGCORE_BLE_FRAME_MAX_LEN (AGCORE_DATA_PAYLOAD_MAX + 11)
+/* AGCORE frame: 8-byte header and 1-byte checksum. */
+#define AGCORE_BLE_FRAME_MAX_LEN (AGCORE_DATA_PAYLOAD_MAX + 9)
 
 // CONTROL -> C -> 0x43
 static const ble_uuid16_t g_agcore_ble_svc_control          = BLE_UUID16_INIT(0x4300);

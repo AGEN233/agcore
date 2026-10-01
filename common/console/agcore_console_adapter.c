@@ -8,7 +8,6 @@
 #include <unistd.h>
 
 static SemaphoreHandle_t g_console_output_lock;
-static StaticSemaphore_t g_console_output_lock_buf;
 
 /**
  * @brief 获取 Console 公共输出锁
@@ -68,6 +67,6 @@ void agcore_console_flush(void)
  */
 bool agcore_console_output_init(void)
 {
-    g_console_output_lock = xSemaphoreCreateMutexStatic(&g_console_output_lock_buf);
+    g_console_output_lock = xSemaphoreCreateMutex();
     return g_console_output_lock != NULL;
 }

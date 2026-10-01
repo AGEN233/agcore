@@ -1,6 +1,6 @@
 menu "AGCORE CONFIG"
 
-rsource "transport/ble/Kconfig"
+rsource "pipe/transport/ble/Kconfig"
 rsource "common/console/Kconfig"
 rsource "common/lifecycle/Kconfig"
 rsource "common/persist/Kconfig"

@@ -28,7 +28,9 @@
 #define SHELL_GET_TICK                      agcore_get_timems
 
 /* shell名  */
+#ifndef SHELL_DEFAULT_USER
 #define SHELL_DEFAULT_USER                  "AGCORE"
+#endif
 
 /* 关闭启动log */
 #define SHELL_SHOW_INFO                     0

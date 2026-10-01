@@ -14,7 +14,6 @@
 #define AGCORE_DATA_TOP_HEAD_LEN      8
 #define AGCORE_DATA_TOP_CHECKSUM_LEN  1
 #define AGCORE_DATA_TOP_OVERHEAD      (AGCORE_DATA_TOP_HEAD_LEN + AGCORE_DATA_TOP_CHECKSUM_LEN)
-#define AGCORE_DATA_CMD_LEN           2
 
 typedef struct {
     bool rx_sn_valid;
@@ -98,12 +97,13 @@ uint16_t agcore_data_encode(agcore_data_t *data, uint8_t *buf)
         return 0;
     }
 
-    if (data->payload_len > AGCORE_DATA_PAYLOAD_MAX) {
-        CORE_LOGD(TAG, "encode payload too long|link=%d cmd=%04X len=%u", data->link, data->cmd, data->payload_len);
+    if (data->payload_len > AGCORE_DATA_PAYLOAD_MAX ||
+            (data->payload_len > 0 && data->payload == NULL)) {
+        CORE_LOGD(TAG, "encode payload invalid|link=%d len=%u", data->link, data->payload_len);
         return 0;
     }
 
-    top_payload_len = AGCORE_DATA_CMD_LEN + data->payload_len;
+    top_payload_len = data->payload_len;
     packet_len = AGCORE_DATA_TOP_OVERHEAD + top_payload_len;
 
     data->sn = state->tx_sn++;
@@ -115,28 +115,29 @@ uint16_t agcore_data_encode(agcore_data_t *data, uint8_t *buf)
     buf[4] = AGCORE_DATA_TOP_VERSION;
     buf[5] = data->sn;
     agcore_put_bytes16(&buf[6], top_payload_len);
-    agcore_put_bytes16(&buf[8], data->cmd);
-
     if (data->payload_len > 0) {
-        memcpy(&buf[AGCORE_DATA_TOP_HEAD_LEN + AGCORE_DATA_CMD_LEN], data->payload, data->payload_len);
+        memcpy(&buf[AGCORE_DATA_TOP_HEAD_LEN], data->payload, data->payload_len);
     }
 
     buf[packet_len - 1] = agcore_checksum8_calc(buf, packet_len - AGCORE_DATA_TOP_CHECKSUM_LEN);
-    CORE_LOGD(TAG, "encode ok|link=%d sn=%02X cmd=%04X payload=%u packet=%u checksum=%02X",
-              data->link, data->sn, data->cmd, data->payload_len, packet_len, buf[packet_len - 1]);
+    CORE_LOGD(TAG, "encode ok|link=%d sn=%02X payload=%u packet=%u checksum=%02X",
+              data->link, data->sn, data->payload_len, packet_len, buf[packet_len - 1]);
 
     return packet_len;
 }
 
 /**
- * @brief 顶层协议包 -> agcore_data_t
+ * @brief 原始顶层协议包 -> agcore_data_t，payload 借用原始缓冲区
+ * @param buf 可写的原始帧缓冲区
+ * @param buf_len 原始帧长度
+ * @param data 输出数据，调用前需设置链路
+ * @return 成功解析的协议包长度，失败返回 0
  */
-uint16_t agcore_data_decode(const uint8_t *buf, uint16_t buf_len, agcore_data_t *data)
+uint16_t agcore_rawdata_decode(uint8_t *buf, uint16_t buf_len, agcore_data_t *data)
 {
     agcore_data_link_state_t *state;
     uint16_t header_pos;
     uint16_t top_payload_len;
-    uint16_t app_payload_len;
     uint16_t packet_len;
     uint8_t checksum;
     uint8_t sn;
@@ -169,14 +170,8 @@ uint16_t agcore_data_decode(const uint8_t *buf, uint16_t buf_len, agcore_data_t 
     }
 
     top_payload_len = agcore_get_bytes16(&buf[header_pos + 6]);
-    if (top_payload_len < AGCORE_DATA_CMD_LEN) {
-        CORE_LOGD(TAG, "decode payload too short|link=%d pos=%u top_payload=%u", data->link, header_pos, top_payload_len);
-        return 0;
-    }
-
-    app_payload_len = top_payload_len - AGCORE_DATA_CMD_LEN;
-    if (app_payload_len > AGCORE_DATA_PAYLOAD_MAX) {
-        CORE_LOGD(TAG, "decode payload too long|link=%d pos=%u app_payload=%u", data->link, header_pos, app_payload_len);
+    if (top_payload_len > AGCORE_DATA_PAYLOAD_MAX) {
+        CORE_LOGD(TAG, "decode payload too long|link=%d pos=%u payload=%u", data->link, header_pos, top_payload_len);
         return 0;
     }
 
@@ -204,12 +199,8 @@ uint16_t agcore_data_decode(const uint8_t *buf, uint16_t buf_len, agcore_data_t 
     }
 
     data->sn = sn;
-    data->cmd = agcore_get_bytes16(&buf[header_pos + 8]);
-    data->payload_len = app_payload_len;
-
-    if (app_payload_len > 0) {
-        memcpy(data->payload, &buf[header_pos + AGCORE_DATA_TOP_HEAD_LEN + AGCORE_DATA_CMD_LEN], app_payload_len);
-    }
+    data->payload_len = top_payload_len;
+    data->payload = top_payload_len > 0 ? &buf[header_pos + AGCORE_DATA_TOP_HEAD_LEN] : NULL;
 
     return packet_len;
 }

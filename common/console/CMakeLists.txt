@@ -1,4 +1,8 @@
+# AGCORE Console / Log
 target_sources(${COMPONENT_LIB} PRIVATE
+    # Console
+    "agcore_console_adapter.c"
+
     # EasyLogger
     "log/easylogger/src/elog.c"
     "log/easylogger/src/elog_utils.c"
@@ -7,16 +11,20 @@ target_sources(${COMPONENT_LIB} PRIVATE
 
     # AGCORE Log
     "log/agcore_console_log.c"
-
-    # Letter Shell
-    "shell/letter_shell/shell.c"
-    "shell/letter_shell/shell_cmd_list.c"
-    "shell/letter_shell/shell_ext.c"
-
-    # AGCORE Console / Shell
-    "agcore_console_adapter.c"
-    "shell/agcore_console_shell.c"
 )
+
+# AGCORE Shell
+if(CONFIG_AGCORE_CONSOLE_SHELL_ENABLE)
+    target_sources(${COMPONENT_LIB} PRIVATE
+        # Letter Shell
+        "shell/letter_shell/shell.c"
+        "shell/letter_shell/shell_cmd_list.c"
+        "shell/letter_shell/shell_ext.c"
+
+        # AGCORE Shell
+        "shell/agcore_console_shell.c"
+    )
+endif()
 
 target_include_directories(${COMPONENT_LIB} PUBLIC
     "."

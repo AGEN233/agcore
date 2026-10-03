@@ -78,8 +78,7 @@ esp_err_t agcore_ble_rx_data_handle(uint16_t conn_handle, const uint8_t *data, u
         return ESP_ERR_INVALID_STATE;
     }
     agcore_data_protocol_state_t *state = agcore_data_protocol_state_get(LINK_BLE);
-    agcore_fragment_result result = agcore_fragment_decode(&state->fragment, data, len,
-                                                           CONFIG_AGCORE_BLE_MESSAGE_MAX_LEN);
+    agcore_fragment_result result = agcore_fragment_decode(&state->fragment, data, len, CONFIG_AGCORE_BLE_MESSAGE_MAX_LEN);
     if (result == AGCORE_FRAGMENT_MORE) {
         ble_npl_time_t ticks;
         ble_npl_time_ms_to_ticks(CONFIG_AGCORE_BLE_FRAGMENT_TIMEOUT_MS, &ticks);
@@ -126,12 +125,13 @@ esp_err_t agcore_ble_notify(const uint8_t *data, uint16_t len)
     uint8_t retries = 0;
 
     while (payload_sent < len) {
-        uint16_t chunk_len = len - payload_sent > payload_len_max ?
-                             payload_len_max : (uint16_t)(len - payload_sent);
+        uint16_t chunk_len = len - payload_sent;
+        if (chunk_len > payload_len_max) {
+            chunk_len = payload_len_max;
+        }
 
         uint8_t header[AGCORE_FRAGMENT_HEADER_LEN];
-        /* 长度和偏移由当前循环保证合法，无需再次判断编码结果。 */
-        agcore_fragment_encode(header, len, payload_sent, chunk_len);
+        agcore_fragment_encode(header, len, payload_sent);
         struct os_mbuf *om = ble_hs_mbuf_from_flat(header, sizeof(header));
         if (!om) {
             CORE_LOGE(TAG, "mbuf allocate failed");

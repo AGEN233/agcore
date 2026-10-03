@@ -6,7 +6,7 @@
 #define TAG "Shell"
 
 static Shell g_shell = {0};
-static char g_shell_buffer[512];
+static char *g_shell_buffer = NULL;
 static bool g_shell_ready = false;
 
 /**
@@ -77,7 +77,10 @@ int agcore_console_shell_init(void)
 {
     g_shell.write = agcore_shell_write;
 
-    shellInit(&g_shell, g_shell_buffer, sizeof(g_shell_buffer));
+    g_shell_buffer = agcore_malloc_pram(CONFIG_AGCORE_CONSOLE_SHELL_BUF_SIZE);
+    if (!g_shell_buffer) return -1;
+
+    shellInit(&g_shell, g_shell_buffer, CONFIG_AGCORE_CONSOLE_SHELL_BUF_SIZE);
     agcore_console_output_lock();
     agcore_console_flush();
     agcore_console_output_unlock();
@@ -89,4 +92,6 @@ int agcore_console_shell_init(void)
     return 0;
 }
 
+#ifdef CONFIG_AGCORE_CONSOLE_SHELL_ENABLE
 AGCORE_SERVICE_INITCALL(agcore_console_shell_init);
+#endif

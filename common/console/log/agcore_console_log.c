@@ -23,13 +23,15 @@ static void agcore_log_output_task(void *arg);
  */
 void agcore_log_port_output(const char *log, size_t size)
 {
+#ifdef CONFIG_AGCORE_CONSOLE_SHELL_ENABLE
     if (agcore_console_shell_is_ready()) {
         agcore_console_shell_write_external(log, size);
-    } else {
-        agcore_console_output_lock();
-        agcore_console_output(log, size);
-        agcore_console_output_unlock();
+        return;
     }
+#endif
+    agcore_console_output_lock();
+    agcore_console_output(log, size);
+    agcore_console_output_unlock();
 }
 
 /**

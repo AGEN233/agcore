@@ -1,21 +1,27 @@
-menu "Console Configuration"
+menu "Console"
 
-menu "Printf Log Configuration"
+    config AGCORE_CORELOG_LEVEL
+        int "Core Log Level"
+        default 3
+        range 0 4
 
-config AGCORE_CORELOG_LEVEL
-    int "Core Log Level"
-    default 3
-    range 0 4
+    config AGCORE_APPLOG_LEVEL
+        int "App Log Level"
+        default 4
+        range 0 4
 
-config AGCORE_APPLOG_LEVEL
-    int "App Log Level"
-    default 4
-    range 0 4
+    config AGCORE_CONSOLE_LOG_LINE_BUF_SIZE
+        int "Log Line Buffer Size"
+        default 512
+        range 128 4096
 
-endmenu
+    config AGCORE_CONSOLE_SHELL_ENABLE
+        bool "Enable AGCORE Shell"
+        default y
 
-menu "Shell Configuration"
-
-endmenu
-
+    config AGCORE_CONSOLE_SHELL_BUF_SIZE
+        int "Shell Buffer Size"
+        default 512
+        range 128 4096
+        depends on AGCORE_CONSOLE_SHELL_ENABLE
 endmenu

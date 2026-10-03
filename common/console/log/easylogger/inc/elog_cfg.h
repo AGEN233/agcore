@@ -37,7 +37,7 @@
 /* enable assert check */
 #define ELOG_ASSERT_ENABLE
 /* buffer size for every line's log */
-#define ELOG_LINE_BUF_SIZE                       512
+#define ELOG_LINE_BUF_SIZE                       CONFIG_AGCORE_CONSOLE_LOG_LINE_BUF_SIZE
 /* output line number max length */
 #define ELOG_LINE_NUM_MAX_LEN                    5
 /* output filter's tag max length */

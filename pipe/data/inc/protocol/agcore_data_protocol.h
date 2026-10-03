@@ -63,15 +63,12 @@ agcore_fragment_result agcore_fragment_decode(agcore_fragment_state_t *state,
                                              uint16_t max_len);
 
 /**
- * @brief 编码分包头，调用方随后追加 chunk_len 字节消息数据
+ * @brief 写入大端分包头，参数合法性由调用方保证
  * @param header 至少 4 字节的输出缓冲区
  * @param total_len 完整消息长度
  * @param offset 本片数据偏移
- * @param chunk_len 本片数据长度
- * @return 参数合法返回 true，否则 false
  */
-bool agcore_fragment_encode(uint8_t *header, uint16_t total_len,
-                           uint16_t offset, uint16_t chunk_len);
+void agcore_fragment_encode(uint8_t *header, uint16_t total_len, uint16_t offset);
 
 /**
  * @brief 封装AGCORE顶层协议帧

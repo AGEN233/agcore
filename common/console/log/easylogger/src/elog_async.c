@@ -29,11 +29,15 @@
 #include <elog.h>
 #include <string.h>
 
-/* modify by agcore: 整个文件豁免 GCC type-limits 告警(纯编译指令, 不改逻辑)。
+/* Modified by agcore: 整个文件豁免 GCC type-limits 告警(纯编译指令, 不改逻辑)。
    触发点: OUTPUT_LVL 配成 ELOG_LVL_ASSERT(0) 时, uint8_t level >= 0 恒真。
    因全局 -Werror 把该告警提升为错误, 故对本第三方文件整文件豁免。 */
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wtype-limits"
+
+/* Modified by AGCORE */
+#include "agcore_port.h"
+
 
 #ifdef ELOG_ASYNC_OUTPUT_ENABLE
 
@@ -92,8 +96,12 @@ static bool thread_running = false;
 #endif
 /* asynchronous output mode enabled flag */
 static bool is_enabled = false;
+
 /* asynchronous output mode's ring buffer */
-static char log_buf[OUTPUT_BUF_SIZE] = { 0 };
+// static char log_buf[OUTPUT_BUF_SIZE] = { 0 };
+/* Modified by AGCORE: allocate async log buffer dynamically. */
+static char *log_buf = NULL;
+
 /* log ring buffer write index */
 static size_t write_index = 0;
 /* log ring buffer read index */
@@ -344,6 +352,12 @@ ElogErrCode elog_async_init(void) {
         return result;
     }
 
+    /* Modified by AGCORE: allocate async log buffer dynamically. */
+    log_buf = agcore_malloc_pram(OUTPUT_BUF_SIZE);
+    if (!log_buf) {
+        return 1;
+    }
+
 #ifdef ELOG_ASYNC_OUTPUT_USING_PTHREAD
     pthread_attr_t thread_attr;
     struct sched_param thread_sched_param;
@@ -385,6 +399,9 @@ void elog_async_deinit(void) {
     
     sem_destroy(&output_notice);
 #endif
+    /* Modified by AGCORE: allocate async log buffer dynamically. */
+    agcore_free(log_buf);
+    log_buf = NULL;
 
     init_ok = false;
 }

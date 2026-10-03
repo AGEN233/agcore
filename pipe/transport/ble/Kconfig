@@ -1,4 +1,4 @@
-menu "AGCORE BLE CONFIG"
+menu "BLE"
 
 config AGCORE_BLE_ENABLE
     bool "Enable AGCORE BLE transport"

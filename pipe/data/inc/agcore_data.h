@@ -6,8 +6,12 @@
 
 typedef enum {
     LINK_NONE = 0,
+#ifdef CONFIG_AGCORE_BLE_ENABLE
     LINK_BLE,
+#endif
+#ifdef CONFIG_AGCORE_UART_ENABLE
     LINK_UART,
+#endif
     LINK_COUNT,
 } agcore_link;
 

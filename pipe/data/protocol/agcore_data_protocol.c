@@ -200,9 +200,7 @@ void agcore_fragment_reset(agcore_fragment_state_t *state)
  * @param max_len 完整消息长度上限
  * @return 重组结果
  */
-agcore_fragment_result agcore_fragment_decode(agcore_fragment_state_t *state,
-                                             const uint8_t *buf, uint16_t len,
-                                             uint16_t max_len)
+agcore_fragment_result agcore_fragment_decode(agcore_fragment_state_t *state, const uint8_t *buf, uint16_t len, uint16_t max_len)
 {
     if (state == NULL) {
         return AGCORE_FRAGMENT_ERROR;
@@ -214,8 +212,7 @@ agcore_fragment_result agcore_fragment_decode(agcore_fragment_state_t *state,
     uint16_t total_len = agcore_get_bytes16(buf);
     uint16_t offset = agcore_get_bytes16(buf + 2);
     uint16_t chunk_len = len - AGCORE_FRAGMENT_HEADER_LEN;
-    if (total_len == 0 || total_len > max_len || offset >= total_len ||
-            chunk_len > total_len - offset) {
+    if (total_len == 0 || total_len > max_len || offset >= total_len || chunk_len > total_len - offset) {
         agcore_fragment_reset(state);
         return AGCORE_FRAGMENT_ERROR;
     }
@@ -238,21 +235,13 @@ agcore_fragment_result agcore_fragment_decode(agcore_fragment_state_t *state,
 }
 
 /**
- * @brief 编码大端分包头
- * @param header 4 字节输出缓冲区
+ * @brief 写入大端分包头，参数合法性由调用方保证
+ * @param header 至少 4 字节的输出缓冲区
  * @param total_len 完整消息长度
  * @param offset 当前偏移
- * @param chunk_len 本片数据长度
- * @return 参数是否合法
  */
-bool agcore_fragment_encode(uint8_t *header, uint16_t total_len,
-                           uint16_t offset, uint16_t chunk_len)
+void agcore_fragment_encode(uint8_t *header, uint16_t total_len, uint16_t offset)
 {
-    if (header == NULL || total_len == 0 || offset >= total_len ||
-            chunk_len == 0 || chunk_len > total_len - offset) {
-        return false;
-    }
     agcore_put_bytes16(header, total_len);
     agcore_put_bytes16(header + 2, offset);
-    return true;
 }

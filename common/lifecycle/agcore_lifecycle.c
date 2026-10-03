@@ -160,6 +160,7 @@ esp_err_t agcore_lifecycle_init(void)
         if (task_ret != pdPASS) {
             g_agcore_lifecycle_stable_task = NULL;
             CORE_LOGE(TAG, "stable task create failed");
+            return ESP_ERR_NO_MEM;
         }
     }
 

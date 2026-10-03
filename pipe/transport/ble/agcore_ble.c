@@ -171,5 +171,5 @@ esp_err_t agcore_ble_init(void)
 }
 
 #ifdef CONFIG_AGCORE_BLE_ENABLE
-AGCORE_CORE_INITCALL(agcore_ble_init);
+AGCORE_SERVICE_INITCALL(agcore_ble_init);
 #endif

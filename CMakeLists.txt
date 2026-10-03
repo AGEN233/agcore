@@ -32,7 +32,6 @@ set(AGCORE_REQUIRES
     spi_flash
     spiffs
     heap
-    bt
     esp_driver_gpio
     esp_driver_rmt
     esp_driver_spi

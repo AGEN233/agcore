@@ -138,7 +138,6 @@ esp_err_t agcore_data_send(const agcore_data_t *data)
     esp_err_t ret;
     if (cb) {
         uint16_t len = agcore_rawdata_encode(data, buf);
-        ret = ESP_ERR_INVALID_STATE;
         ret = len == 0 ? ESP_FAIL : cb(buf, len);
     } else {
         ret = ESP_ERR_INVALID_STATE;
@@ -186,4 +185,4 @@ int agcore_data_queue_init(void)
     return ESP_OK;
 }
 
-AGCORE_SERVICE_INITCALL(agcore_data_queue_init);
+AGCORE_CORE_INITCALL(agcore_data_queue_init);

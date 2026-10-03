@@ -157,19 +157,13 @@ static esp_err_t agcore_ble_nimble_init(void)
  */
 esp_err_t agcore_ble_init(void)
 {
-    #ifdef CONFIG_AGCORE_BLE_ENABLE
-        agcore_data_send_register(LINK_BLE, agcore_ble_notify);
+    agcore_data_send_register(LINK_BLE, agcore_ble_notify);
 
-        esp_err_t ret =  agcore_ble_nimble_init();
-        if (ret != ESP_OK) {
-            return ESP_FAIL;
-        }
-        return ESP_OK;
-    #else
+    esp_err_t ret =  agcore_ble_nimble_init();
+    if (ret != ESP_OK) {
         return ESP_FAIL;
-    #endif
+    }
+    return ESP_OK;
 }
 
-#ifdef CONFIG_AGCORE_BLE_ENABLE
 AGCORE_SERVICE_INITCALL(agcore_ble_init);
-#endif

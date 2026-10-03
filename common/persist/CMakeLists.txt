@@ -1,10 +1,10 @@
-target_sources(${COMPONENT_LIB} PRIVATE
-    "agcore_persist.c"
-    "agcore_nvs.c"
-    "agcore_flash.c"
-    "agcore_fs.c"
+list(APPEND AGCORE_SRCS
+    "common/persist/agcore_persist.c"
+    "common/persist/agcore_nvs.c"
+    "common/persist/agcore_flash.c"
+    "common/persist/agcore_fs.c"
 )
 
-target_include_directories(${COMPONENT_LIB} PUBLIC
-    "inc"
+list(APPEND AGCORE_INCLUDE_DIRS
+    "common/persist/inc"
 )

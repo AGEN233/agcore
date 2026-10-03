@@ -6,6 +6,8 @@
 #include "agcore.h"
 #include "agcore_bytes.h"
 
+#define TAG "VER"
+
 static agcore_device_info_t g_agcore_device_info = {
     .device_type = 0,
     .device_id = 0,
@@ -163,3 +165,24 @@ int agcore_version_info_get_string(char *buf, size_t buf_len)
 
     return snprintf(buf, buf_len, "%04X", g_agcore_version_info.version);
 }
+
+/**
+ * @brief Shell 命令: 显示版本信息
+ */
+static void agcore_shell_get_version(void)
+{
+    CORE_LOGI(TAG, "Project:");
+    CORE_LOGI("Project", "  Device type: %04X", g_agcore_device_info.device_type);
+    CORE_LOGI("Project", "  Device ID:   %04X", g_agcore_device_info.device_id);
+    CORE_LOGI("Project", "  FW version:  %04X", g_agcore_device_info.fw_version);
+    CORE_LOGI("Project", "  HW version:  %04X", g_agcore_device_info.hw_version);
+
+    CORE_LOGI(TAG, "AGCORE:");
+    CORE_LOGI("AGCORE", "  Version:     %04X", g_agcore_version_info.version);
+    CORE_LOGI("AGCORE", "  SemVer:      %d.%d.%d", AGCORE_VERSION_MAJOR, AGCORE_VERSION_MINOR, AGCORE_VERSION_PATCH);
+    CORE_LOGI("AGCORE", "  Git branch:  %s", g_agcore_version_info.git_branch);
+    CORE_LOGI("AGCORE", "  Git hash:    %s", g_agcore_version_info.git_hash);
+    CORE_LOGI("AGCORE", "  Build time:  %s", g_agcore_version_info.build_time);
+}
+
+AGCORE_SHELL_CMD_FUNC(version, agcore_shell_get_version, project and agcore version);

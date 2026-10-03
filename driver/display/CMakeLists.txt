@@ -1,11 +1,11 @@
-target_sources(${COMPONENT_LIB} PRIVATE
-    "display_driver.c"
-    "panel/st7735/display_st7735.c"
-    "panel/st7789/display_st7789.c"
+list(APPEND AGCORE_SRCS
+    "driver/display/display_driver.c"
+    "driver/display/panel/st7735/display_st7735.c"
+    "driver/display/panel/st7789/display_st7789.c"
 )
 
-target_include_directories(${COMPONENT_LIB} PUBLIC
-    "inc"
-    "panel/st7735"
-    "panel/st7789"
+list(APPEND AGCORE_INCLUDE_DIRS
+    "driver/display/inc"
+    "driver/display/panel/st7735"
+    "driver/display/panel/st7789"
 )

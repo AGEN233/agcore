@@ -1,7 +1,7 @@
-target_sources(${COMPONENT_LIB} PRIVATE
-    "pixel_driver.c"
+list(APPEND AGCORE_SRCS
+    "driver/pixel/pixel_driver.c"
 )
 
-target_include_directories(${COMPONENT_LIB} PUBLIC
-    "."
+list(APPEND AGCORE_INCLUDE_DIRS
+    "driver/pixel"
 )

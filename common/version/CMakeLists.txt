@@ -22,7 +22,7 @@ endif()
 
 string(TIMESTAMP AGCORE_BUILD_TIME "%Y-%m-%d %H:%M:%S")
 
-set(AGCORE_VERSION_GENERATED_DIR "${CMAKE_CURRENT_BINARY_DIR}/generated")
+set(AGCORE_VERSION_GENERATED_DIR "${CMAKE_CURRENT_BINARY_DIR}/common/version/generated")
 file(MAKE_DIRECTORY "${AGCORE_VERSION_GENERATED_DIR}")
 configure_file(
     "${CMAKE_CURRENT_LIST_DIR}/agcore_version.h"
@@ -30,11 +30,11 @@ configure_file(
     @ONLY
 )
 
-target_sources(${COMPONENT_LIB} PRIVATE
-    "agcore_version.c"
+list(APPEND AGCORE_SRCS
+    "common/version/agcore_version.c"
 )
 
-target_include_directories(${COMPONENT_LIB} PUBLIC
+list(APPEND AGCORE_INCLUDE_DIRS
     "${AGCORE_VERSION_GENERATED_DIR}"
-    "."
+    "common/version"
 )

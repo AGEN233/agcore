@@ -9,6 +9,7 @@
 #include "sdkconfig.h"
 #include "esp_heap_caps.h"
 #include "esp_timer.h"
+#include "nvs.h"
 
 #define agcore_get_timems()         ((uint32_t)(esp_timer_get_time() / 1000ULL))
 #define agcore_get_timeus()         ((uint64_t)esp_timer_get_time())

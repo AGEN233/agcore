@@ -1,7 +1,7 @@
 #ifndef __AGCORE_SHELL_CFG_USER_H__
 #define __AGCORE_SHELL_CFG_USER_H__
 
-#include "agcore_console_shell.h"
+#include "agcore_port.h"
 
 /* 尾行模式 */
 #define SHELL_SUPPORT_END_LINE              1

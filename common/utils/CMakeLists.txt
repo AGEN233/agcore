@@ -1,8 +1,8 @@
-target_sources(${COMPONENT_LIB} PRIVATE
-    "agcore_check.c"
-    "agcore_bytes.c"
+list(APPEND AGCORE_SRCS
+    "common/utils/agcore_check.c"
+    "common/utils/agcore_bytes.c"
 )
 
-target_include_directories(${COMPONENT_LIB} PUBLIC
-    "inc"
+list(APPEND AGCORE_INCLUDE_DIRS
+    "common/utils/inc"
 )

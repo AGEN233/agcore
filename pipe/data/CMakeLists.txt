@@ -1,11 +1,11 @@
-target_sources(${COMPONENT_LIB} PRIVATE
-    "agcore_data.c"
-    "agcore_data_route.c"
-    "agcore_data_core_cmd.c"
-    "protocol/agcore_data_protocol.c"
+list(APPEND AGCORE_SRCS
+    "pipe/data/agcore_data.c"
+    "pipe/data/agcore_data_route.c"
+    "pipe/data/agcore_data_core_cmd.c"
+    "pipe/data/protocol/agcore_data_protocol.c"
 )
 
-target_include_directories(${COMPONENT_LIB} PUBLIC
-    "inc"
-    "inc/protocol"
+list(APPEND AGCORE_INCLUDE_DIRS
+    "pipe/data/inc"
+    "pipe/data/inc/protocol"
 )

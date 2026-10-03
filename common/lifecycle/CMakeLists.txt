@@ -1,7 +1,7 @@
-target_sources(${COMPONENT_LIB} PRIVATE
-    "agcore_lifecycle.c"
+list(APPEND AGCORE_SRCS
+    "common/lifecycle/agcore_lifecycle.c"
 )
 
-target_include_directories(${COMPONENT_LIB} PUBLIC
-    "."
+list(APPEND AGCORE_INCLUDE_DIRS
+    "common/lifecycle"
 )

@@ -1,18 +1,6 @@
 #include "agcore_lifecycle.h"
 #include "initcall.h"
-
-#include <stddef.h>
-#include <string.h>
-
-#include "sdkconfig.h"
-
-#include "agcore_check.h"
-#include "agcore_console_log.h"
-#include "agcore_nvs.h"
-#include "esp_system.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "nvs.h"
+#include "agcore.h"
 
 #define TAG "lifecycle"
 
@@ -231,3 +219,33 @@ uint32_t agcore_lifecycle_reset_reason_get(void)
 {
     return g_agcore_lifecycle_data.reset_reason;
 }
+
+static void agcore_shell_get_lifecycle(void)
+{
+    const char *boot_reason = "unknown";
+
+    switch (agcore_lifecycle_boot_reason_get()) {
+        case BOOT_NORMAL:
+            boot_reason = "normal";
+            break;
+        case BOOT_BLANK:
+            boot_reason = "blank";
+            break;
+        case BOOT_FACTORY:
+            boot_reason = "factory";
+            break;
+        case BOOT_ABNORMAL:
+            boot_reason = "abnormal";
+            break;
+        default:
+            break;
+    }
+
+    CORE_LOGI(TAG, "Lifecycle:");
+    CORE_LOGI(TAG, "  Boot reason:  %s", boot_reason);
+    CORE_LOGI(TAG, "  Reset reason: %u", agcore_lifecycle_reset_reason_get());
+    CORE_LOGI(TAG, "  Boot total:   %u", agcore_lifecycle_boot_total_count_get());
+    CORE_LOGI(TAG, "  Boot streak:  %u", agcore_lifecycle_boot_streak_count_get());
+}
+
+AGCORE_SHELL_CMD_FUNC(lifecycle, agcore_shell_get_lifecycle, lifecycle information);

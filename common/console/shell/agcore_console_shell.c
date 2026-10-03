@@ -92,6 +92,4 @@ int agcore_console_shell_init(void)
     return 0;
 }
 
-#ifdef CONFIG_AGCORE_CONSOLE_SHELL_ENABLE
 AGCORE_SERVICE_INITCALL(agcore_console_shell_init);
-#endif

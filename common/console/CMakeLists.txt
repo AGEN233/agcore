@@ -13,6 +13,7 @@ target_sources(${COMPONENT_LIB} PRIVATE
     "log/agcore_console_log.c"
 )
 
+# AGCORE Console / Log include
 target_include_directories(${COMPONENT_LIB} PUBLIC
     "."
     "log"
@@ -21,6 +22,8 @@ target_include_directories(${COMPONENT_LIB} PUBLIC
 
 # AGCORE Shell
 if(CONFIG_AGCORE_CONSOLE_SHELL_ENABLE)
+
+    # Shell sources
     target_sources(${COMPONENT_LIB} PRIVATE
         # Letter Shell
         "shell/letter_shell/shell.c"
@@ -31,21 +34,24 @@ if(CONFIG_AGCORE_CONSOLE_SHELL_ENABLE)
         "shell/agcore_console_shell.c"
     )
 
-    target_include_directories(${COMPONENT_LIB} PUBLIC
-        "shell"
-        "shell/letter_shell"
+    # AGCORE Shell API 对外可见，Letter Shell 仅内部可见
+    target_include_directories(${COMPONENT_LIB}
+        PUBLIC
+            "shell"
+        PRIVATE
+            "shell/letter_shell"
     )
 
-    # 使用当前 ESP-IDF 工程名称作为 Shell 默认用户名。
+    # 使用当前 ESP-IDF 工程名称作为 Shell 默认用户名
     idf_build_get_property(project_name PROJECT_NAME)
 
-    # Letter Shell 配置。
+    # Letter Shell 配置
     target_compile_definitions(${COMPONENT_LIB} PRIVATE
         "SHELL_CFG_USER=\"agcore_shell_cfg_user.h\""
         "SHELL_DEFAULT_USER=\"${project_name}\""
     )
 
-    # Letter Shell 为第三方源码，编译兼容选项仅作用于其自身。
+    # Letter Shell 为第三方源码，编译兼容选项仅作用于其自身
     set_source_files_properties(
         "${CMAKE_CURRENT_LIST_DIR}/shell/letter_shell/shell.c"
         "${CMAKE_CURRENT_LIST_DIR}/shell/letter_shell/shell_cmd_list.c"
@@ -55,7 +61,7 @@ if(CONFIG_AGCORE_CONSOLE_SHELL_ENABLE)
             "-fno-strict-aliasing;-Wno-error=incompatible-pointer-types;-Wno-error=cast-function-type;-w"
     )
 
-    # AGCORE Shell 适配层需要兼容 Letter Shell 的命令函数类型转换。
+    # AGCORE Shell 适配层需要兼容 Letter Shell 的命令函数类型转换
     set_source_files_properties(
         "${CMAKE_CURRENT_LIST_DIR}/shell/agcore_console_shell.c"
         TARGET_DIRECTORY ${COMPONENT_LIB}
@@ -63,8 +69,9 @@ if(CONFIG_AGCORE_CONSOLE_SHELL_ENABLE)
             "-Wno-error=cast-function-type"
     )
 
-    # 注册 Letter Shell 命令表链接段。
+    # 注册 Letter Shell 命令表链接段
     __ldgen_add_fragment_files(
         "${CMAKE_CURRENT_LIST_DIR}/shell/letter_shell.lf"
     )
+
 endif()

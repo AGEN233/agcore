@@ -8,7 +8,7 @@
 
 #define AGCORE_VERSION_MAJOR    0
 #define AGCORE_VERSION_MINOR    10
-#define AGCORE_VERSION_PATCH    1
+#define AGCORE_VERSION_PATCH    2
 
 #define AGCORE_VERSION          0x03
 
@@ -18,7 +18,9 @@
 #include "agcore_check.h"
 #include "agcore_version.h"
 #include "agcore_console_log.h"
+#ifdef CONFIG_AGCORE_CONSOLE_SHELL_ENABLE
 #include "agcore_console_shell.h"
+#endif
 #include "agcore_persist.h"
 #include "agcore_nvs.h"
 #include "agcore_fs.h"

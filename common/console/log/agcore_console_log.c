@@ -1,6 +1,9 @@
 #include "agcore_console_log.h"
 #include "agcore_console.h"
+
+#ifdef CONFIG_AGCORE_CONSOLE_SHELL_ENABLE
 #include "agcore_console_shell.h"
+#endif
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"

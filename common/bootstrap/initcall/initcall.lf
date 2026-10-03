@@ -28,16 +28,16 @@ entries:
 archive: *
 entries:
     * (agcore_initcall_core_default);
-        agcore_initcall_core -> flash_rodata KEEP() SORT(name) SURROUND(_ag_i0)
+        agcore_initcall_core -> flash_rodata KEEP() SORT(name) SURROUND(vQ4mZ8rL2xN7pT5kD9wH3fB6yC1sJ0gA8eR4uI7oP2dF6hK9lM3qW5zX1nG8tV2)
 
 [mapping:agcore_initcall_service]
 archive: *
 entries:
     * (agcore_initcall_service_default);
-        agcore_initcall_service -> flash_rodata KEEP() SORT(name) SURROUND(_ag_i1)
+        agcore_initcall_service -> flash_rodata KEEP() SORT(name) SURROUND(cY7pL3wR9mF2xK8dT4qH6vN1sB5gJ0zA7eU3iO9rD2fW8hM4lQ6kX1nG5tV0)
 
 [mapping:agcore_initcall_late]
 archive: *
 entries:
     * (agcore_initcall_late_default);
-        agcore_initcall_late -> flash_rodata KEEP() SORT(name) SURROUND(_ag_i2)
+        agcore_initcall_late -> flash_rodata KEEP() SORT(name) SURROUND(nH2vQ8kL4xR7pD1mT9wF3yB6sJ0gA5eU2iO8rC4dW7hM1lZ9qX3fK6tV0)

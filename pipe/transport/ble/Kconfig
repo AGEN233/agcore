@@ -20,4 +20,20 @@ config AGCORE_BLE_ADV_ITVL_MAX_MS
     default 200
     depends on AGCORE_BLE_ENABLE
 
+config AGCORE_BLE_MESSAGE_MAX_LEN
+    int "Maximum reassembled BLE message length"
+    range 1 65535
+    default 4096
+    depends on AGCORE_BLE_ENABLE
+    help
+        Limit the complete protocol message length, excluding the fragment header.
+
+config AGCORE_BLE_FRAGMENT_TIMEOUT_MS
+    int "BLE fragment receive idle timeout(ms)"
+    range 100 60000
+    default 5000
+    depends on AGCORE_BLE_ENABLE
+    help
+        Release an incomplete message if no valid continuation arrives in time.
+
 endmenu

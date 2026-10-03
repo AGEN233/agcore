@@ -63,6 +63,9 @@ void agcore_ble_get_addr(uint8_t *addr)
 static void agcore_ble_on_stack_reset_cb(int reason)
 {
     atomic_store(&g_agcore_ble_ready, false);
+    agcore_ble_pipe_reset();
+    g_agcore_ble_conn_handle = BLE_HS_CONN_HANDLE_NONE;
+    g_agcore_ble_gap_mtu = 23;
 }
 
 /**

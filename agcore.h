@@ -25,6 +25,7 @@
 #include "agcore_flash.h"
 #include "agcore_lifecycle.h"
 #include "agcore_data.h"
+#include "agcore_data_route.h"
 #include "agcore_ble.h"
 #include "display_driver.h"
 #include "pixel_driver.h"

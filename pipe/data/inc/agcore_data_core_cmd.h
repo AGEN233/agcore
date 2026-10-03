@@ -1,5 +1,5 @@
-#ifndef __AGCORE_CORE_CMD_H__
-#define __AGCORE_CORE_CMD_H__
+#ifndef __AGCORE_DATA_CORE_CMD_H__
+#define __AGCORE_DATA_CORE_CMD_H__
 
 #include "agcore_data.h"
 #include "agcore_version.h"
@@ -12,4 +12,4 @@
 #define CORE_CMD_GET_DEVICETIME     0xAC01      /* 查询设备时间戳  */
 #define CORE_CMD_SET_DEVICETIME     0xAC02      /* 设置设备时间    */
 
-#endif /* __AGCORE_CORE_CMD_H__ */
+#endif /* __AGCORE_DATA_CORE_CMD_H__ */

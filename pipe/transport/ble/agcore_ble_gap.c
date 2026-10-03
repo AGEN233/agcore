@@ -4,6 +4,7 @@
 
 #include "agcore_ble_adv.h"
 #include "agcore_ble_gap.h"
+#include "agcore_ble_pipe.h"
 #include "agcore_data.h"
 #include "agcore_console_log.h"
 #include "nimble/nimble_port.h"
@@ -12,7 +13,6 @@
 #define TAG "AGCORE_BLE_GAP"
 
 static struct ble_npl_callout g_agcore_ble_mtu_callout;
-static bool g_agcore_ble_connected = false;
 volatile uint16_t g_agcore_ble_gap_mtu = 23;
 uint16_t g_agcore_ble_conn_handle = BLE_HS_CONN_HANDLE_NONE;
 
@@ -40,13 +40,18 @@ static void agcore_ble_gap_mtu_exchange_initiate(struct ble_npl_event *ev)
 static void agcore_ble_gap_connect_handle(struct ble_gap_event *event)
 {
     if (event->connect.status == 0) {
-        g_agcore_ble_connected = true;
+        if (g_agcore_ble_conn_handle != BLE_HS_CONN_HANDLE_NONE) {
+            ble_gap_terminate(event->connect.conn_handle, BLE_ERR_REM_USER_CONN_TERM);
+            return;
+        }
+        agcore_ble_pipe_reset();
+        g_agcore_ble_gap_mtu = 23;
         g_agcore_ble_conn_handle = event->connect.conn_handle;
         agcore_data_link_reset(LINK_BLE);
 
         struct ble_gap_conn_desc conn_desc;
         if (ble_gap_conn_find(g_agcore_ble_conn_handle, &conn_desc) == 0) {
-            CORE_LOGD(TAG, "peer address: %02X:%02X:%02X:%02X:%02X:%02X"conn_desc.peer_id_addr.val[5], conn_desc.peer_id_addr.val[4], conn_desc.peer_id_addr.val[3], conn_desc.peer_id_addr.val[2], conn_desc.peer_id_addr.val[1], conn_desc.peer_id_addr.val[0]);
+            CORE_LOGD(TAG, "peer address: %02X:%02X:%02X:%02X:%02X:%02X", conn_desc.peer_id_addr.val[5], conn_desc.peer_id_addr.val[4], conn_desc.peer_id_addr.val[3], conn_desc.peer_id_addr.val[2], conn_desc.peer_id_addr.val[1], conn_desc.peer_id_addr.val[0]);
         } else {
             CORE_LOGD(TAG, "peer address unavailable");
         }
@@ -64,11 +69,16 @@ static void agcore_ble_gap_connect_handle(struct ble_gap_event *event)
  */
 /**
  * @brief GAP 断开事件处理: 复位链路并恢复广播
+ * @param event GAP 事件
  */
-static void agcore_ble_gap_disconnect_handle(void)
+static void agcore_ble_gap_disconnect_handle(struct ble_gap_event *event)
 {
+    if (event->disconnect.conn.conn_handle != g_agcore_ble_conn_handle) {
+        return;
+    }
+    agcore_ble_pipe_reset();
     ble_npl_callout_stop(&g_agcore_ble_mtu_callout);
-    g_agcore_ble_connected = false;
+    g_agcore_ble_gap_mtu = 23;
     g_agcore_ble_conn_handle = BLE_HS_CONN_HANDLE_NONE;
     agcore_data_link_reset(LINK_BLE);
     agcore_ble_adv_update();
@@ -85,6 +95,9 @@ static void agcore_ble_gap_disconnect_handle(void)
  */
 static void agcore_ble_gap_mtu_handle(struct ble_gap_event *event)
 {
+    if (event->mtu.conn_handle != g_agcore_ble_conn_handle) {
+        return;
+    }
     g_agcore_ble_gap_mtu = event->mtu.value;
     ble_npl_callout_stop(&g_agcore_ble_mtu_callout);
     CORE_LOGD(TAG, "mtu updated|%d", g_agcore_ble_gap_mtu);
@@ -111,7 +124,7 @@ int agcore_ble_gap_event_cb(struct ble_gap_event *event, void *arg)
             break;
         }
         case BLE_GAP_EVENT_DISCONNECT: {
-            agcore_ble_gap_disconnect_handle();
+            agcore_ble_gap_disconnect_handle(event);
             break;
         }
         case BLE_GAP_EVENT_MTU: {
@@ -132,7 +145,7 @@ int agcore_ble_gap_event_cb(struct ble_gap_event *event, void *arg)
  */
 bool agcore_ble_is_connected(void)
 {
-    return g_agcore_ble_connected;
+    return g_agcore_ble_conn_handle != BLE_HS_CONN_HANDLE_NONE;
 }
 
 /**
@@ -140,6 +153,7 @@ bool agcore_ble_is_connected(void)
  */
 void agcore_ble_gap_init(void)
 {
+    agcore_ble_pipe_init();
     ble_svc_gap_init();
     ble_npl_callout_init(&g_agcore_ble_mtu_callout, nimble_port_get_dflt_eventq(), agcore_ble_gap_mtu_exchange_initiate, NULL);
 }

@@ -14,8 +14,8 @@ uint8_t agcore_checksum8_calc(const uint8_t *data, uint16_t len)
 {
     uint8_t checksum = 0;
 
-    for (uint16_t i = 0; i < len; i++) {
-        checksum += data[i];
+    while (len-- > 0) {
+        checksum += *data++;
     }
 
     return checksum;

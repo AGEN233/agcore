@@ -88,7 +88,7 @@ void agcore_data_handler_register(agcore_data_cb cb);
 链路层通过以下接口把数据推入 AGCORE 数据队列：
 
 ```c
-void agcore_data_push(agcore_link link, const uint8_t *raw, uint16_t raw_len);
+esp_err_t agcore_data_push(agcore_link link, uint8_t *raw, uint16_t raw_len);
 ```
 
 ## 统一数据头
@@ -111,7 +111,15 @@ typedef struct {
 - `payload_len`: 顶层协议 payload 的字节数。
 - `payload`: 不透明字节串。AGCORE 的队列、编解码和通用路由不解释其中的业务格式。
 
-链路层入队前会复制原始帧；接收任务解码后同步调用所有回调，回调返回后释放帧缓冲区。需要命令的 CORE 或应用回调自行解析 payload，不能保留接收 payload 指针。发送接口同样将 payload 作为不透明字节串，并在入队前复制。
+链路层提交完整帧的堆缓冲区；`agcore_data_push()` 成功时转移所有权，失败时调用方负责释放。接收任务解码后同步调用所有回调，全部回调返回后释放帧缓冲区。回调只借用 payload，不得释放、保存指针或修改共享内容；应答使用独立发送数据。发送接口在当前任务中封包并提交链路。
+
+### BLE 分包
+
+现有写入特征 `0x4301` 和 Notify 特征 `0x4302` 均使用独立分包头，每片格式为 `total_len[2] | offset[2] | data[N]`，两个字段均为大端。`total_len` 包含整个顶层帧（含顶层头和校验），`offset` 是本片数据在完整帧中的字节偏移。单片消息也必须携带分包头，偏移为 0。
+
+接收端只允许一个正在重组的消息：偏移为 0 开始或替换当前消息，后续片总长度必须一致且偏移连续；格式错误会丢弃当前重组。完整消息才进入统一队列，其他链路可直接提交完整帧。分包编解码在 `pipe/data/protocol/agcore_data_protocol.c`，不解释顶层协议。
+
+`CONFIG_AGCORE_BLE_MESSAGE_MAX_LEN` 默认 4096 字节；`CONFIG_AGCORE_BLE_FRAGMENT_TIMEOUT_MS` 默认 5000 毫秒，按最后一片接收时间计时。超时、断连和重连均清理未完成重组。Notify 按实际 MTU 切片，每片数据上限为 `MTU - 7`。分包层不额外添加序号，使用连续偏移检查顺序；顶层协议序号保持独立。
 
 ## 使用方式
 
